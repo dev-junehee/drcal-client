@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 
-const ModalBtn = ({ handler }) => {
-  return <Container onClick={handler}>신청하기</Container>;
+const DutyBtn = () => {
+  return <Container>당직 수정</Container>;
 };
 
-export default ModalBtn;
+export default DutyBtn;
 
 const Container = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24rem;
+  width: 15rem;
   height: 3.5em;
   border: 0;
   outline: 0;
