@@ -1,10 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom';
-import App from '../App';
-import Login from './Login';
-import SignUp from './SignUp';
-import Calendar from './Calendar';
-import RequestList from './RequestList';
-import MyPage from './MyPage';
+import App from '@/App';
+import Login from '@/pages/Login';
+import SignUp from '@/pages/SignUp';
+import Calendar from '@/pages/Calendar';
+import RequestList from '@/pages/RequestList';
+import MyPage from '@/pages/MyPage';
 
 const router = createBrowserRouter([
   {
