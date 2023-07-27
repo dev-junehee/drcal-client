@@ -17,4 +17,9 @@ const Container = styled.button`
   border-radius: 8px;
   background-color: ${props => props.theme.primary};
   color: ${props => props.theme.white};
+  cursor: pointer;
+  transition: all ease 0.3s;
+  &:hover {
+    opacity: 0.9;
+  }
 `;
