@@ -85,15 +85,15 @@ const SideBar = () => {
     <Container>
       <Logo>Dr.Cal</Logo>
       <Menu>
-        <MenuItem to="/main/calendar" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <MenuItem to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
           <AiOutlineClockCircle />
           <span>전체 캘린더</span>
         </MenuItem>
-        <MenuItem to="/main/request" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <MenuItem to="/request" className={({ isActive }) => (isActive ? 'active' : '')}>
           <FaRegPaperPlane />
           <span>요청 내역 확인</span>
         </MenuItem>
-        <MenuItem to="/main/mypage" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <MenuItem to="/mypage" className={({ isActive }) => (isActive ? 'active' : '')}>
           <BsFillPersonFill />
           <span>개인 정보 수정</span>
         </MenuItem>

@@ -9,23 +9,21 @@ import Layout from '@/pages/Layout';
 
 const router = createBrowserRouter([
   {
-    path: '/',
     element: <App />,
     children: [
       {
-        path: '/main',
         element: <Layout />,
         children: [
           {
-            path: '/main/calendar',
+            path: '/',
             element: <Calendar />,
           },
           {
-            path: '/main/request',
+            path: '/request',
             element: <RequestList />,
           },
           {
-            path: '/main/mypage',
+            path: '/mypage',
             element: <MyPage />,
           },
         ],
