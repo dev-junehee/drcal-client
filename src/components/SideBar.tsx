@@ -85,15 +85,15 @@ const SideBar = () => {
     <Container>
       <Logo>Dr.Cal</Logo>
       <Menu>
-        <MenuItem to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <MenuItem to="/main/calendar" className={({ isActive }) => (isActive ? 'active' : '')}>
           <AiOutlineClockCircle />
           <span>전체 캘린더</span>
         </MenuItem>
-        <MenuItem to="/request" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <MenuItem to="/main/request" className={({ isActive }) => (isActive ? 'active' : '')}>
           <FaRegPaperPlane />
           <span>요청 내역 확인</span>
         </MenuItem>
-        <MenuItem to="/mypage" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <MenuItem to="/main/mypage" className={({ isActive }) => (isActive ? 'active' : '')}>
           <BsFillPersonFill />
           <span>개인 정보 수정</span>
         </MenuItem>
@@ -132,15 +132,13 @@ const SideBar = () => {
 export default SideBar;
 
 const Container = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  align-items: center;
   width: 18.75rem;
   height: 100%;
   background-color: ${props => props.theme.white};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 `;
 
 const Logo = styled.span`

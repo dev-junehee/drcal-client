@@ -5,6 +5,7 @@ import SignUp from '@/pages/SignUp';
 import Calendar from '@/pages/Calendar';
 import RequestList from '@/pages/RequestList';
 import MyPage from '@/pages/MyPage';
+import Layout from '@/pages/Layout';
 
 const router = createBrowserRouter([
   {
@@ -12,16 +13,22 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '',
-        element: <Calendar />,
-      },
-      {
-        path: '/request',
-        element: <RequestList />,
-      },
-      {
-        path: '/mypage',
-        element: <MyPage />,
+        path: '/main',
+        element: <Layout />,
+        children: [
+          {
+            path: '/main/calendar',
+            element: <Calendar />,
+          },
+          {
+            path: '/main/request',
+            element: <RequestList />,
+          },
+          {
+            path: '/main/mypage',
+            element: <MyPage />,
+          },
+        ],
       },
       {
         path: '/login',
