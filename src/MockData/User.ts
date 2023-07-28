@@ -1,0 +1,20 @@
+export const data = {
+  user: {
+    id: 1,
+    emp_no: 1001,
+    name: '김가나',
+    email: 'kim@naver.com',
+    phone: '01012345678',
+    hospital_id: 1,
+    dept_id: 1,
+    level: 'PK',
+    auth: 'USER',
+    status: 'APPROVED',
+    annual: 10,
+    duty: 5,
+    profile_image_url: '/test',
+    hiredate: '2023-07-01T00:00:00Z',
+    created_at: '2023-07-01T00:00:00Z',
+    updated_at: '2023-07-01T00:00:00Z',
+  },
+};
