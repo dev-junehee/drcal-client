@@ -7,7 +7,7 @@ const themes: DefaultTheme = {
   white: '#FFFFFF',
   gray: '#AAAAAA',
   lightGray: '#CECECE',
-  middleGray: '#d9d9d9',
+  middleGray: '#D9D9D9',
   green: '#5AB543',
   red: '#C13030',
   bgColor: '#F4F4F4',

@@ -47,11 +47,14 @@ const initialUserData: UserData = {
 };
 
 const SideBar = () => {
+  // const [isActive, setIsActive] = useState(false);
   const [User, setUser] = useState<UserData>(initialUserData);
 
   useEffect(() => {
     const obj = data.user;
     setUser(obj);
+    // const currentPath = window.location.pathname;
+    // setIsActive(currentPath === '/mypage');
   }, []);
 
   //과
@@ -85,18 +88,26 @@ const SideBar = () => {
     <Container>
       <Logo>Dr.Cal</Logo>
       <Menu>
-        <MenuItem to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <MenuItem to="/">
           <AiOutlineClockCircle />
           <span>전체 캘린더</span>
         </MenuItem>
-        <MenuItem to="/request" className={({ isActive }) => (isActive ? 'active' : '')}>
+        <MenuItem to="/request">
           <FaRegPaperPlane />
           <span>요청 내역 확인</span>
         </MenuItem>
-        <MenuItem to="/mypage" className={({ isActive }) => (isActive ? 'active' : '')}>
-          <BsFillPersonFill />
-          <span>개인 정보 수정</span>
-        </MenuItem>
+        <IsSubMenu>
+          <MenuItem to="/userinfo">
+            <BsFillPersonFill />
+            <span>마이페이지</span>
+          </MenuItem>
+          <SubMenu>
+            <SubMenuItem to="/userinfo">개인정보 수정</SubMenuItem>
+            <SubMenuItem to="/password" className={({ isActive }) => (isActive ? 'active' : '')}>
+              비밀번호 변경
+            </SubMenuItem>
+          </SubMenu>
+        </IsSubMenu>
       </Menu>
       <Wrapper>
         <UserInfo>
@@ -172,6 +183,30 @@ const MenuItem = styled(NavLink)`
   }
 `;
 
+const IsSubMenu = styled.div``;
+
+const SubMenu = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 1.25rem;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+`;
+
+const SubMenuItem = styled(NavLink)`
+  align-items: center;
+  font-size: 0.875rem;
+  color: ${props => props.theme.lightGray};
+  span {
+    margin-left: 1rem;
+    box-sizing: border-box;
+    height: 1.5rem;
+  }
+  &.active {
+    color: ${props => props.theme.black};
+  }
+`;
+
 const Wrapper = styled.div`
   position: absolute;
   bottom: 0;
@@ -238,7 +273,7 @@ const LogoutBtn = styled.button`
   background-color: transparent;
   color: ${props => props.theme.primary};
   font-size: 0.8125rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1rem;
   font-weight: 500;
   cursor: pointer;
 `;
