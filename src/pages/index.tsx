@@ -4,8 +4,9 @@ import Login from '@/pages/Login';
 import SignUp from '@/pages/SignUp';
 import Calendar from '@/pages/Calendar';
 import RequestList from '@/pages/RequestList';
-import MyPage from '@/pages/MyPage';
+import UserInfo from '@/pages/UserInfo';
 import Layout from '@/pages/Layout';
+import Password from '@/pages/Password';
 
 const router = createBrowserRouter([
   {
@@ -23,8 +24,12 @@ const router = createBrowserRouter([
             element: <RequestList />,
           },
           {
-            path: '/mypage',
-            element: <MyPage />,
+            path: '/userinfo',
+            element: <UserInfo />,
+          },
+          {
+            path: '/password',
+            element: <Password />,
           },
         ],
       },
