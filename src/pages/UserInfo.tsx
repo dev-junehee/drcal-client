@@ -2,8 +2,10 @@ import { useRef, useState } from 'react';
 // import { useForm } from 'react-hook-form';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
+import { data } from '@/MockData/User';
+import { UserData } from '@/lib/types';
 
-// interface EditProfileBody {
+// interface EditProfileBody
 //   profile_image_url: string;
 //   name: string;
 //   hospital_id: number;
@@ -11,8 +13,10 @@ import styled from 'styled-components';
 // }
 
 const UserInfo = () => {
+  const [user, setUser] = useState<UserData>(data.user);
   const [profileImg, setProfileImg]: string | null = useState('/public/user.png');
   const imgRef = useRef();
+  console.log('확인', user);
 
   // const {
   //   register,
@@ -37,7 +41,7 @@ const UserInfo = () => {
       <Title>
         <h2>개인정보 수정</h2>
       </Title>
-      <FormWrapper>
+      <FormWrapper id="user-info">
         <Label className="profile">
           <ProfileImgWrapper>
             <img src={profileImg ? profileImg : '/images/user.png'} alt="프로필 이미지" onClick={uploadProfileImg} />
@@ -47,15 +51,23 @@ const UserInfo = () => {
         </Label>
         <Label>
           name
-          <Input type="text" placeholder="김의사" />
+          <Input type="text" defaultValue={user.name} />
+        </Label>
+        <Label>
+          Hospital
+          <Select form="user-info" defaultValue="연세 세브란스">
+            {user.hospital_id === 1 ? <option value="1">연세 세브란스 병원</option> : <></>}
+          </Select>
         </Label>
         <Label>
           Part
-          <Input type="text" placeholder="응급의학과" />
+          <Select form="user-info" defaultValue="응급의학과">
+            {user.hospital_id === 1 ? <option value="1">응급의학과</option> : <></>}
+          </Select>
         </Label>
         <Label>
           Phone Number
-          <Input type="text" placeholder="010-0000-0000" />
+          <Input type="text" defaultValue={user.phone} />
         </Label>
         <EditBtnWrapper>
           <Btn content="수정하기" />
@@ -92,7 +104,7 @@ const FormWrapper = styled.form`
   align-items: center;
   gap: 16px;
   width: 500px;
-  height: 600px;
+  height: 700px;
 `;
 
 const Label = styled.label`
@@ -123,6 +135,16 @@ const Input = styled.input`
   &.profile-img {
     display: none;
   }
+`;
+
+const Select = styled.select`
+  width: 340px;
+  height: 44px;
+  padding-left: 16px;
+  border: 1px solid ${props => props.theme.gray};
+  border-radius: 8px;
+  margin-top: 8px;
+  font-family: 'Pretendard', sans-serif;
 `;
 
 const ProfileImgWrapper = styled.div`
