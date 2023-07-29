@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-const Btn = ({ content, handler }) => {
-  return <Container onClick={handler}>{content}</Container>;
+const Btn = ({ content }) => {
+  return <Container>{content}</Container>;
 };
 
 export default Btn;
