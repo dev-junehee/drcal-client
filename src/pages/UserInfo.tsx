@@ -73,7 +73,7 @@ const Container = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  gap: 30px;
+  gap: 20px;
 `;
 
 const Title = styled.div`
@@ -97,7 +97,7 @@ const FormWrapper = styled.form`
 
 const Label = styled.label`
   width: 340px;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   font-family: 'ABeeZee', sans-serif;
   font-size: 0.8rem;
   &.profile {
@@ -106,7 +106,7 @@ const Label = styled.label`
     justify-content: center;
     align-items: center;
     gap: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     font-size: 1rem;
     font-weight: 600;
   }
