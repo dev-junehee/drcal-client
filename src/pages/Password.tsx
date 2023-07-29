@@ -1,14 +1,12 @@
 import { useRef, useState } from 'react';
-// import { useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
 
-// interface EditProfileBody {
-//   profile_image_url: string;
-//   name: string;
-//   hospital_id: number;
-//   phone: string;
-// }
+interface EditPasswordBody {
+  password: string;
+  ConfirmPassword: string;
+}
 
 const UserInfo = () => {
   const [profileImg, setProfileImg]: string | null = useState('/public/user.png');
@@ -22,14 +20,9 @@ const UserInfo = () => {
     reset,
   } = useForm<SignUpBody>({ mode: 'onChange' });
 
-  // 프로필 사진 업로드 핸들러
-  const uploadProfileImg = () => {
-    const file = imgRef.current.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setProfileImg(reader.result);
-    };
+  // 비밀번호 수정 핸들러
+  const onSubmit = (data: EditPasswordBody) => {
+    console.log('비밀번호 수정', data);
   };
 
   return (
@@ -37,18 +30,18 @@ const UserInfo = () => {
       <Title>
         <h2>비밀번호 수정</h2>
       </Title>
-      <FormWrapper>
+      <FormWrapper onSubmit={handleSubmit(onSubmit)}>
         <Label>
           Password
-          <Input type="text" placeholder="현재 비밀번호를 입력해 주세요." />
+          <Input type="password" placeholder="현재 비밀번호를 입력해 주세요." {...register('Password')} />
         </Label>
         <Label>
           New Password
-          <Input type="text" placeholder="8자 이상의 새 비밀번호를 입력해 주세요." />
+          <Input type="password" placeholder="8자 이상의 새 비밀번호를 입력해 주세요." />
         </Label>
         <Label>
           New Password Check
-          <Input type="text" placeholder="새 비밀번호를 다시 입력해 주세요." />
+          <Input type="password" placeholder="새 비밀번호를 다시 입력해 주세요." />
         </Label>
         <EditBtnWrapper>
           <Btn content="수정하기" />
