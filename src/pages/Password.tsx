@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { PWValidation } from '@/lib/Validation';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
 
 interface EditPasswordBody {
   password: string;
-  ConfirmPassword: string;
+  ConfirmPW: string;
 }
 
 const UserInfo = () => {
@@ -18,7 +19,7 @@ const UserInfo = () => {
     watch,
     formState: { errors, isSubmitting, isDirty, isValid },
     reset,
-  } = useForm<SignUpBody>({ mode: 'onChange' });
+  } = useForm<EditPasswordBody>({ mode: 'onChange' });
 
   // 비밀번호 수정 핸들러
   const onSubmit = (data: EditPasswordBody) => {
@@ -33,7 +34,13 @@ const UserInfo = () => {
       <FormWrapper onSubmit={handleSubmit(onSubmit)}>
         <Label>
           Password
-          <Input type="password" placeholder="현재 비밀번호를 입력해 주세요." {...register('Password')} />
+          <Input
+            type="password"
+            placeholder="현재 비밀번호를 입력해 주세요."
+            maxLength={16}
+            {...(register('password'), PWValidation)}
+          />
+          {errors?.password && <span>{errors.password.message}</span>}
         </Label>
         <Label>
           New Password
@@ -41,7 +48,19 @@ const UserInfo = () => {
         </Label>
         <Label>
           New Password Check
-          <Input type="password" placeholder="새 비밀번호를 다시 입력해 주세요." />
+          <Input
+            type="password"
+            placeholder="새 비밀번호를 다시 입력해 주세요."
+            maxLength={16}
+            {...register('ConfirmPW', {
+              required: '비밀번호는 필수 입력입니다.',
+              validate: {
+                value: (val: string | undefined) => {
+                  if (watch('password') !== val) return '비밀번호가 일치하지 않습니다.';
+                },
+              },
+            })}
+          />
         </Label>
         <EditBtnWrapper>
           <Btn content="수정하기" />
