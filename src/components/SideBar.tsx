@@ -27,6 +27,20 @@ interface UserData {
   updated_at: string;
 }
 
+interface MenuItemProps {
+  to: string;
+  onClick?: () => void;
+  isactive?: string;
+}
+
+interface SubMenuProps {
+  open?: boolean;
+}
+
+interface ProgressProps {
+  $percent: number;
+}
+
 const initialUserData: UserData = {
   id: 0,
   emp_no: 0,
@@ -47,17 +61,16 @@ const initialUserData: UserData = {
 };
 
 const SideBar = () => {
-  // const [isActive, setIsActive] = useState(false);
   const [User, setUser] = useState<UserData>(initialUserData);
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
+  const [isMyPageActive, setIsMyPageActive] = useState('false');
 
   useEffect(() => {
     const obj = data.user;
     setUser(obj);
-    // const currentPath = window.location.pathname;
-    // setIsActive(currentPath === '/mypage');
   }, []);
 
-  //과
+  //과 구분 출력
   const getDept = () => {
     if (User.dept_id == 1) {
       return '소아과';
@@ -66,7 +79,7 @@ const SideBar = () => {
     }
   };
 
-  //직급
+  //직급 구분 출력
   const getLevel = () => {
     if (User.level == 'PK') {
       return '본과실습생';
@@ -84,31 +97,45 @@ const SideBar = () => {
     return Math.floor((data / max) * 100);
   };
 
+  const handleClickMyPage = () => {
+    setIsSubMenuOpen(true);
+  };
+
+  const handleClickMenu = () => {
+    setIsSubMenuOpen(false);
+    setIsMyPageActive('false');
+  };
+
+  const handleClickSubMenu = () => {
+    setIsMyPageActive('true');
+  };
+
   return (
     <Container>
       <Logo>Dr.Cal</Logo>
       <Menu>
-        <MenuItem to="/">
+        <MenuItem to="/" onClick={handleClickMenu}>
           <AiOutlineClockCircle />
           <span>전체 캘린더</span>
         </MenuItem>
-        <MenuItem to="/request">
+        <MenuItem to="/request" onClick={handleClickMenu}>
           <FaRegPaperPlane />
           <span>요청 내역 확인</span>
         </MenuItem>
-        <IsSubMenu>
-          <MenuItem to="/userinfo">
-            <BsFillPersonFill />
-            <span>마이페이지</span>
-          </MenuItem>
-          <SubMenu>
-            <SubMenuItem to="/userinfo">개인정보 수정</SubMenuItem>
-            <SubMenuItem to="/password" className={({ isActive }) => (isActive ? 'active' : '')}>
-              비밀번호 변경
-            </SubMenuItem>
-          </SubMenu>
-        </IsSubMenu>
+        <MenuItem to="/userinfo" onClick={handleClickMyPage} isactive={isMyPageActive}>
+          <BsFillPersonFill />
+          <span className="mypage">마이페이지</span>
+        </MenuItem>
       </Menu>
+      <SubMenu open={isSubMenuOpen}>
+        <SubMenuItem to="/userinfo" onClick={handleClickSubMenu}>
+          개인정보 수정
+        </SubMenuItem>
+        <SubMenuItem to="/password" onClick={handleClickSubMenu}>
+          비밀번호 변경
+        </SubMenuItem>
+      </SubMenu>
+
       <Wrapper>
         <UserInfo>
           <span className="user-name">{User.name}</span>
@@ -119,14 +146,14 @@ const SideBar = () => {
           <DataRow>
             <span className="label">남은 연차</span>
             <ProgressBar>
-              <Progress className="annual" percent={percentData(User.annual, 15)}></Progress>
+              <Progress className="annual" $percent={percentData(User.annual, 15)}></Progress>
             </ProgressBar>
             <span>{User.annual}일</span>
           </DataRow>
           <DataRow>
             <span className="label">이번달 당직</span>
             <ProgressBar>
-              <Progress className="duty" percent={percentData(User.duty, 15)}></Progress>
+              <Progress className="duty" $percent={percentData(User.duty, 15)}></Progress>
             </ProgressBar>
             <span>{User.duty}일</span>
           </DataRow>
@@ -147,13 +174,13 @@ const Container = styled.div`
   flex-direction: column;
   flex-shrink: 0;
   align-items: center;
-  width: 18.75rem;
+  width: 300px;
   height: 100%;
   background-color: ${props => props.theme.white};
 `;
 
 const Logo = styled.span`
-  margin-top: 2.5rem;
+  margin-top: 40px;
   font-size: 2rem;
   font-weight: 700;
   color: ${props => props.theme.primary};
@@ -163,17 +190,17 @@ const Menu = styled.div`
   display: flex;
   flex-direction: column;
   gap: 25px;
-  margin-top: 3.125rem;
+  margin-top: 50px;
 `;
 
-const MenuItem = styled(NavLink)`
+const MenuItem = styled(NavLink)<MenuItemProps>`
   font-weight: 700;
   display: flex;
   align-items: center;
   span {
-    margin-left: 1rem;
+    margin-left: 16px;
     box-sizing: border-box;
-    height: 1.5rem;
+    height: 24px;
   }
   &.active {
     color: ${props => props.theme.primary};
@@ -181,28 +208,25 @@ const MenuItem = styled(NavLink)`
       border-bottom: 2px solid ${props => props.theme.primary};
     }
   }
+  .mypage {
+    border-bottom: ${props => (props.isactive == 'true' ? '2px' : '0')} solid ${props => props.theme.primary};
+  }
 `;
 
-const IsSubMenu = styled.div``;
-
-const SubMenu = styled.div`
-  display: flex;
+const SubMenu = styled.div<SubMenuProps>`
+  display: ${props => (props.open ? 'flex' : 'none')};
   flex-direction: column;
-  margin-left: 1.25rem;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 10px;
+  margin-top: 10px;
+  margin-left: 20px;
 `;
 
 const SubMenuItem = styled(NavLink)`
   align-items: center;
   font-size: 0.875rem;
   color: ${props => props.theme.lightGray};
-  span {
-    margin-left: 1rem;
-    box-sizing: border-box;
-    height: 1.5rem;
-  }
   &.active {
+    font-weight: 700;
     color: ${props => props.theme.black};
   }
 `;
@@ -210,38 +234,38 @@ const SubMenuItem = styled(NavLink)`
 const Wrapper = styled.div`
   position: absolute;
   bottom: 0;
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  width: 100%;
+  gap: 10px;
+  margin-bottom: 15px;
 `;
 
 const UserInfo = styled.div`
-  width: 15rem;
   display: flex;
   align-items: baseline;
+  width: 240px;
   .user-name {
+    margin-right: 10px;
     font-size: 1.125rem;
     font-weight: 700;
-    margin-right: 0.5rem;
   }
   .user-dept,
   .user-level {
+    margin-right: 5px;
     font-size: 0.75rem;
     color: ${props => props.theme.gray};
-    margin-right: 0.3125rem;
   }
 `;
 
 const UserData = styled.div`
-  width: 15rem;
   display: flex;
   flex-direction: column;
+  width: 240px;
   gap: 16px;
-  margin-bottom: 1.25rem;
+  margin-bottom: 20px;
 `;
 
 const DataRow = styled.div`
@@ -249,36 +273,36 @@ const DataRow = styled.div`
   align-items: center;
   justify-content: space-between;
   .label {
-    width: 5rem;
+    width: 80px;
   }
 `;
 
 const ProgressBar = styled.div`
-  width: 5rem;
-  height: 0.3125rem;
+  width: 80px;
+  height: 5px;
+  border-radius: 30px;
   background-color: ${props => props.theme.middleGray};
-  border-radius: 1.875rem;
 `;
 
-const Progress = styled.div<{ percent: number }>`
-  width: ${props => props.percent + '%'};
+const Progress = styled.div<ProgressProps>`
+  width: ${props => props.$percent + '%'};
   height: 100%;
+  border-radius: 30px;
   background-color: ${props => props.theme.primary};
-  border-radius: 1.875rem;
 `;
 
 const LogoutBtn = styled.button`
   border: none;
   outline: none;
+  margin-top: 20px;
   background-color: transparent;
   color: ${props => props.theme.primary};
-  font-size: 0.8125rem;
-  margin-bottom: 1rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
 `;
 
 const Mark = styled.span`
+  font-size: 0.75rem;
   color: ${props => props.theme.lightGray};
-  font-size: 0.8125rem;
 `;
