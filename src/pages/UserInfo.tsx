@@ -85,7 +85,7 @@ const UserInfo = () => {
         </Label>
         <Label>
           Hospital
-          <DefaultValue>{hospitalDecode[user?.hospital_id]?.hospital}</DefaultValue>
+          <Select></Select>
         </Label>
         <Label>
           Part
@@ -136,7 +136,7 @@ const FormWrapper = styled.form`
 `;
 
 const Label = styled.label`
-  width: 340px;
+  width: 320px;
   border: 1px solid red;
   font-family: 'ABeeZee', sans-serif;
   font-size: 0.8rem;
@@ -164,8 +164,6 @@ const Input = styled.input`
 `;
 
 const Select = styled.select`
-  width: 340px;
-  height: 50px;
   padding-left: 16px;
   border: 1px solid ${props => props.theme.gray};
   border-radius: 8px;
@@ -213,16 +211,4 @@ const ProfileImgEdit = styled.div`
 
 const EditBtnWrapper = styled.div`
   margin-top: 20px;
-`;
-
-const DefaultValue = styled.div`
-  display: flex;
-  align-items: center;
-  width: 320px;
-  height: 50px;
-  padding-left: 16px;
-  border: 1px solid ${props => props.theme.gray};
-  border-radius: 8px;
-  margin-top: 8px;
-  background-color: ${props => props.theme.white};
 `;
