@@ -1,12 +1,32 @@
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { MdOutlineLocalHospital } from 'react-icons/md';
 import styled from 'styled-components';
+import { hospitalDecode } from '@/utils/decode';
 
 const MainHeader = () => {
+  const [hospital, setHospital]: number = useState('병원명');
+
+  // 유저 개인 정보 (mypage) - 재직 병원 확인
+  const getUserHospital = () => {
+    axios.get('/junehee/mypage.json').then(res => {
+      if (res.status === 200) {
+        console.log('재직중인 병원 코드 확인', res.data.item.hospital_id);
+        const hospitalNum = res.data.item.hospital_id;
+        setHospital(hospitalDecode[hospitalNum].hospital);
+      }
+    });
+  };
+
+  useEffect(() => {
+    getUserHospital();
+  }, []);
+
   return (
     <Container>
       <HosPital>
         <MdOutlineLocalHospital />
-        <span className="hospital-name">연세 세브란스 병원</span>
+        <span className="hospital-name">{hospital}</span>
       </HosPital>
     </Container>
   );
