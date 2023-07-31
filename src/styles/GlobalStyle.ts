@@ -25,6 +25,21 @@ const GlobalStyle = createGlobalStyle`
   button {
     font-family: 'Pretendard', 'sans-serif';
   }
+  input {
+    box-sizing: border-box;
+    width: 340px;
+    height: 50px;
+    border: 1px solid ${props => props.theme.gray};
+    border-radius: 0.5rem;
+    padding: 0 1rem;
+    margin-bottom: 2rem;
+    transition: all 0.2s;
+    &:focus {
+      outline: none;
+      border: 1px solid ${props => props.theme.secondary};
+      box-shadow: 0 0 4px 2px rgba(156, 184, 255, 0.3);
+    }
+  }
 `;
 
 export default GlobalStyle;

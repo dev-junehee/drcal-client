@@ -4,6 +4,7 @@ import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
 import { data } from '@/MockData/User';
 import { UserData } from '@/lib/types';
+import { hospitalDecode } from '@/utils/decode';
 
 // interface EditProfileBody
 //   profile_image_url: string;
@@ -56,13 +57,16 @@ const UserInfo = () => {
         <Label>
           Hospital
           <Select form="user-info" defaultValue="연세 세브란스">
-            {user.hospital_id === 1 ? <option value="1">연세 세브란스 병원</option> : <></>}
+            {/* {user.hospital_id === 1 ? <option value="연세 세브란스 병원">연세 세브란스 병원</option> : <></>} */}
+            {/* {hospitalDecode.map(v=>(<option value={v}>{v}</option>))} */}
           </Select>
         </Label>
         <Label>
           Part
           <Select form="user-info" defaultValue="응급의학과">
-            {user.hospital_id === 1 ? <option value="1">응급의학과</option> : <></>}
+            {hospitalDecode[user.hospital_id].dept.map(v => (
+              <option value={v}>{v}</option>
+            ))}
           </Select>
         </Label>
         <Label>
