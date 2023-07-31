@@ -42,7 +42,7 @@ const GlobalStyle = createGlobalStyle`
     &:focus {
       outline: none;
       border: 1px solid ${props => props.theme.secondary};
-      box-shadow: 0 0 5px 5px rgba(156, 184, 255, 0.7);
+      box-shadow: 0 0 6px 3px rgba(156, 184, 255, 0.3);
     }
   }
 `;
