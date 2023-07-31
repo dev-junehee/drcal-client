@@ -1,7 +1,7 @@
 // 프로젝트에 사용되는 types 정리 //
 
 // 사용자 데이터
-interface UserData {
+export interface UserData {
   id: number;
   emp_no: number;
   name: string;
@@ -19,5 +19,3 @@ interface UserData {
   created_at: string;
   updated_at: string;
 }
-
-export { UserData };
