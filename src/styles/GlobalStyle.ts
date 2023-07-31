@@ -24,20 +24,25 @@ const GlobalStyle = createGlobalStyle`
   }
   button {
     font-family: 'Pretendard', 'sans-serif';
+    outline: 0;
+    cursor: pointer;
+    transition: all ease 0.3s;
+    &:hover {
+      opacity: 0.9;
+    }
   }
-  input {
+  input, select {
     box-sizing: border-box;
-    width: 340px;
-    height: 50px;
+    width: 320px;
+    height: 46px;
     border: 1px solid ${props => props.theme.gray};
-    border-radius: 0.5rem;
-    padding: 0 1rem;
-    margin-bottom: 2rem;
-    transition: all 0.2s;
+    border-radius: 8px;
+    padding: 0 16px;
+    transition: all 0.3s;
     &:focus {
       outline: none;
       border: 1px solid ${props => props.theme.secondary};
-      box-shadow: 0 0 4px 2px rgba(156, 184, 255, 0.3);
+      box-shadow: 0 0 5px 5px rgba(156, 184, 255, 0.7);
     }
   }
 `;
