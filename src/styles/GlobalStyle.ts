@@ -1,8 +1,9 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  html {
+  html, #root {
     position : relative;
+    height: 100%;
     top: 0;
     bottom: 0;
     left: 0;
@@ -20,6 +21,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     padding: 0;
     margin: 0;
+    height: 100%;
     background-color: ${props => props.theme.primary};
   }
   button {
