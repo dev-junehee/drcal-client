@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-// import { useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
 // import { data } from '@/MockData/User';
 import { UserData } from '@/lib/types';
 import { hospitalDecode } from '@/utils/decode';
 import axios from 'axios';
+import MyPage from '@/pages/MyPage';
 
 // interface EditProfileBody
 //   profile_image_url: string;
@@ -17,6 +18,7 @@ import axios from 'axios';
 const UserInfo = () => {
   const [user, setUser] = useState<UserData>();
   const [profileImg, setProfileImg]: string | null = useState('/user.png');
+  const [passwordChecked, setPasswordChecked]: boolean = useState(false);
   const imgRef = useRef();
 
   // 개인정보 조회
@@ -48,13 +50,13 @@ const UserInfo = () => {
     getUserInfo();
   }, []);
 
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   watch,
-  //   formState: { errors, isSubmitting, isDirty, isValid },
-  //   reset,
-  // } = useForm<SignUpBody>({ mode: 'onChange' });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting, isDirty, isValid },
+    reset,
+  } = useForm<SignUpBody>({ mode: 'onChange' });
 
   // 프로필 사진 업로드 핸들러
   const uploadProfileImg = () => {
@@ -67,41 +69,51 @@ const UserInfo = () => {
   };
 
   return (
-    <Container>
-      <Title>
-        <h2>개인정보 수정</h2>
-      </Title>
-      <FormWrapper id="user-info">
-        <Label className="profile">
-          <ProfileImgWrapper>
-            <img src={profileImg ? profileImg : '/images/user.png'} alt="프로필 이미지" onClick={uploadProfileImg} />
-          </ProfileImgWrapper>
-          <ProfileImgEdit>변경</ProfileImgEdit>
-          <Input type="file" accept="image/*" className="profile-img" />
-        </Label>
-        <Label>
-          name
-          <Input type="text" defaultValue={user?.name} />
-        </Label>
-        <Label>
-          Hospital
-          <Select></Select>
-        </Label>
-        <Label>
-          Part
-          <Select form="user-info">
-            {hospitalDecode[user?.hospital_id]?.dept.map(v => <option value={v}>{v}</option>)}
-          </Select>
-        </Label>
-        <Label>
-          Phone Number
-          <Input type="text" defaultValue={user?.phone} />
-        </Label>
-        <EditBtnWrapper>
-          <Btn content="수정하기" onSubmit={editUserInfo} />
-        </EditBtnWrapper>
-      </FormWrapper>
-    </Container>
+    <>
+      {!passwordChecked ? (
+        <MyPage />
+      ) : (
+        <Container>
+          <Title>
+            <h2>개인정보 수정</h2>
+          </Title>
+          <FormWrapper id="user-info">
+            <Label className="profile">
+              <ProfileImgWrapper>
+                <img
+                  src={profileImg ? profileImg : '/images/user.png'}
+                  alt="프로필 이미지"
+                  onClick={uploadProfileImg}
+                />
+              </ProfileImgWrapper>
+              <ProfileImgEdit>변경</ProfileImgEdit>
+              <Input type="file" accept="image/*" className="profile-img" />
+            </Label>
+            <Label>
+              name
+              <Input type="text" defaultValue={user?.name} />
+            </Label>
+            <Label>
+              Hospital
+              <Select></Select>
+            </Label>
+            <Label>
+              Part
+              <Select form="user-info">
+                {hospitalDecode[user?.hospital_id]?.dept.map(v => <option value={v}>{v}</option>)}
+              </Select>
+            </Label>
+            <Label>
+              Phone Number
+              <Input type="text" defaultValue={user?.phone} />
+            </Label>
+            <EditBtnWrapper>
+              <Btn content="수정하기" onSubmit={editUserInfo} />
+            </EditBtnWrapper>
+          </FormWrapper>
+        </Container>
+      )}
+    </>
   );
 };
 
