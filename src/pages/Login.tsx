@@ -1,83 +1,62 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
 import Btn from '@/components/Buttons/Btn';
-import { useState } from 'react';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
+import SignUpValidation from '@/lib/Validation/validation';
+import { useForm } from 'react-hook-form';
+import { FiAlertCircle } from 'react-icons/fi';
+
+type FormData = {
+  email: string;
+  password: string;
+};
 
 const Login = () => {
-  const [loginForm, setLoginForm] = useState({
-    email: '',
-    password: '',
-  });
-  const [errorMessage, setErrorMessage] = useState({
-    email: '',
-    password: '',
-  });
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<FormData>();
 
-  const handleSubmitEvent = event => {
-    event.preventDefault();
-    console.log('서브밋!!');
-    if (loginForm.password.length === 0) {
-      setErrorMessage({ ...errorMessage, password: 'empty' });
-      console.log('비번없음');
-      console.log(errorMessage.password);
-    }
-    if (loginForm.password.length > 8 && loginForm.password.length <= 20) {
-      setErrorMessage({ ...errorMessage, password: '' });
-      console.log('비번잇음');
-    }
-    if (loginForm.password.length < 8 || loginForm.password.length >= 20) {
-      setErrorMessage({ ...errorMessage, password: 'wrong' });
-      console.log('비번이상');
-      console.log(errorMessage.password);
-    }
-  };
+  const onSubmit = async (data: FormData) => {
+    const validationErrors = SignUpValidation(data);
 
-  const showErrorMessage = () => {
-    if (errorMessage.password === 'empty') {
-      console.log('비번안나감');
-      return (
-        <InfoBox>
-          <AiOutlineInfoCircle /> 비밀번호를 입력해주세요
-        </InfoBox>
-      );
+    if (Object.keys(validationErrors).length > 0) {
+      Object.entries(validationErrors).forEach(([field, message]) => {
+        setError(field, { type: 'manual', message });
+      });
+    } else {
+      console.log(data);
+      navigate('/');
     }
-    if (errorMessage.password === 'wrong') {
-      console.log('비번안나감');
-      return (
-        <InfoBox>
-          {' '}
-          <AiOutlineInfoCircle /> 올바른 비밀번호를 입력해주세요
-        </InfoBox>
-      );
-    }
-    return null;
   };
 
   return (
     <Container>
       <Wrap>
         <h1>어서오세요!</h1>
-        <FormWrap onSubmit={event => handleSubmitEvent(event)} name="loginForm">
+        <FormWrap onSubmit={handleSubmit(onSubmit)} name="loginForm">
           <InputContainer>
             <div className="inputTitle">email</div>
-            <input
-              type="email"
-              placeholder="이메일을 입력해주세요."
-              value={loginForm.email}
-              onChange={e => setLoginForm({ ...loginForm, email: e.target.value })}
-            />
+            <input type="email" placeholder="이메일을 입력해주세요." {...register('email')} />
+            {errors.email && (
+              <InfoBox>
+                <FiAlertCircle />
+                <span className="info-text">{errors.email.message}</span>
+              </InfoBox>
+            )}
           </InputContainer>
           <InputContainer>
             <div className="inputTitle">password</div>
-            <input
-              type="password"
-              placeholder="비밀번호를 입력해주세요."
-              value={loginForm.password}
-              onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
-            />
+            <input type="password" placeholder="비밀번호를 입력해주세요." {...register('password')} />
+            {errors.password && (
+              <InfoBox>
+                <FiAlertCircle />
+                <span className="info-text">{errors.password.message}</span>
+              </InfoBox>
+            )}
           </InputContainer>
-          {showErrorMessage()}
           <InputContainer>
             <Btn content={'로그인'} />
           </InputContainer>
@@ -98,7 +77,7 @@ const Container = styled.div`
   display: flex;
   justify-content: right;
   align-items: center;
-  padding: 48px;
+  padding-right: 60px;
 `;
 const Wrap = styled.div`
   box-sizing: border-box;
@@ -106,8 +85,8 @@ const Wrap = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 30px;
-  width: 700px;
+  gap: 16px;
+  width: 800px;
   height: 1120px;
   border-radius: 8px;
   background-color: ${props => props.theme.white};
@@ -123,26 +102,31 @@ const Wrap = styled.div`
 `;
 
 const FormWrap = styled.form`
-  margin-bottom: 32px;
+  height: fit-content;
 `;
 
 const InputContainer = styled.div`
   .inputTitle {
-    margin-bottom: 10px;
+    font-family: 'ABeeZee', sans-serif;
+    margin-bottom: 8px;
   }
   button {
-    margin-top: 32px;
+    margin-top: 62px;
   }
-  &:nth-child(2) {
-    input {
-      margin-bottom: 16px;
-    }
+  &:first-child {
+    margin-bottom: 16px;
   }
 `;
 
 const InfoBox = styled.div`
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
   color: red;
   font-size: 14px;
+  .info-text {
+    margin-left: 8px;
+  }
 `;
 
 export default Login;
