@@ -1,13 +1,36 @@
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { hospitalDecode } from '@/utils/decode';
 import { MdOutlineLocalHospital } from 'react-icons/md';
 import styled from 'styled-components';
 
 const MainHeader = () => {
+  const [hospitalName, setHospitalName] = useState('병원명');
+
+  // 유저 개인 정보 (mypage) - 재직 병원 확인
+  const getUserHospital = () => {
+    axios
+      .get('/junehee/mypage.json')
+      .then(res => {
+        if (res.status === 200) {
+          console.log('재직중인 병원 코드 확인', res.data.item.hospital_id);
+          const hospitalNum = res.data.item.hospital_id;
+          setHospitalName(hospitalDecode[hospitalNum].hospital);
+        }
+      })
+      .catch(error => console.error('재직 병원 코드 확인 실패', error));
+  };
+
+  useEffect(() => {
+    getUserHospital();
+  }, []);
+
   return (
     <Container>
-      <HosPital>
+      <HosPitalName>
         <MdOutlineLocalHospital />
-        <span className="hospital-name">연세 세브란스 병원</span>
-      </HosPital>
+        <span className="hospital-name">{hospitalName}</span>
+      </HosPitalName>
     </Container>
   );
 };
@@ -19,19 +42,19 @@ const Container = styled.div`
   justify-content: flex-end;
   align-items: center;
   width: 100%;
-  height: 4rem;
+  height: 64px;
   color: ${props => props.theme.gray};
   font-weight: 500;
 `;
 
-const HosPital = styled.div`
+const HosPitalName = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  margin: 2rem;
+  gap: 8px;
+  margin: 32px;
   svg {
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 20px;
+    height: 20px;
   }
 `;
