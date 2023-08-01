@@ -116,7 +116,7 @@ const SignUp = () => {
             <Label>
               Hospital
               {errors?.hospital && <Error>{errors.hospital.message}</Error>}
-              <Select {...register('hospital', hospitalValidation)}>
+              <Select required {...register('hospital', hospitalValidation)}>
                 <option value="" selected disabled hidden>
                   재직중인 병원을 선택해 주세요.
                 </option>
@@ -128,7 +128,7 @@ const SignUp = () => {
             <Label>
               Part
               {errors?.dept && <Error>{errors.dept.message}</Error>}
-              <Select {...register('dept', deptValidation)}>
+              <Select required {...register('dept', deptValidation)}>
                 <option className="default" value="" selected disabled hidden>
                   근무중인 파트를 선택해 주세요.
                 </option>
@@ -245,7 +245,13 @@ const Select = styled.select`
   background: url(/arrow.png) calc(100% - 16px) center no-repeat;
   background-size: 14px;
   background-color: ${props => props.theme.white};
-  color: gray;
+  &:required:invalid {
+    color: gray;
+  }
+  select,
+  option {
+    color: black;
+  }
 `;
 
 const Error = styled.span`
