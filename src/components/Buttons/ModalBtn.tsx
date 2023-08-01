@@ -10,8 +10,8 @@ const Container = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24rem;
-  height: 3.5em;
+  width: 390px;
+  height: 60px;
   border: 0;
   border-radius: 8px;
   background-color: ${props => props.theme.primary};
