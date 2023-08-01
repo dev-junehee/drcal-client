@@ -54,7 +54,6 @@ const UserInfo = () => {
             maxLength={16}
             {...(register('password'), PWValidation)}
           />
-          {errors?.password && <span>{errors.password.message}</span>}
         </Label>
         <Label>
           New Password
@@ -64,7 +63,6 @@ const UserInfo = () => {
             maxLength={16}
             {...(register('password'), PWValidation)}
           />
-          {errors?.password && <span>{errors.password.message}</span>}
         </Label>
         <Label>
           New Password Check
