@@ -1,12 +1,13 @@
+import { useEffect, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
+import axios from 'axios';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import { BsFillPersonFill } from 'react-icons/bs';
 import { FaRegPaperPlane } from 'react-icons/fa';
-import { NavLink } from 'react-router-dom';
 import AnnualBtn from '@/components/Buttons/AnnualBtn';
 import DutyBtn from '@/components/Buttons/DutyBtn';
-import { useEffect, useState } from 'react';
-import { data } from '@/MockData/User';
+import { hospitalDecode } from '@/utils/decode';
 
 interface UserData {
   id: number;
@@ -65,19 +66,22 @@ const SideBar = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [isMyPageActive, setIsMyPageActive] = useState('false');
 
-  useEffect(() => {
-    const obj = data.user;
-    setUser(obj);
-  }, []);
+  const navigate = useNavigate();
 
-  //과 구분 출력
-  const getDept = () => {
-    if (User.dept_id == 1) {
-      return '소아과';
-    } else if (User.dept_id == 2) {
-      return '흉부외과';
+  const getUser = async () => {
+    try {
+      const data = await axios.get('http://127.0.0.1:5173/daseul/User.json');
+      setUser(data.data.item);
+      return data;
+    } catch (error) {
+      console.warn(error);
+      console.warn('fail');
+      return false;
     }
   };
+  useEffect(() => {
+    getUser();
+  }, []);
 
   //직급 구분 출력
   const getLevel = () => {
@@ -110,6 +114,11 @@ const SideBar = () => {
     setIsMyPageActive('true');
   };
 
+  const handleClickLogout = () => {
+    //토큰 받아오기 성공 이후 토큰날리기 작업 추가 필요
+    navigate('/login');
+  };
+
   return (
     <Container>
       <Logo>Dr.Cal</Logo>
@@ -139,28 +148,28 @@ const SideBar = () => {
       <Wrapper>
         <UserInfo>
           <span className="user-name">{User.name}</span>
-          <span className="user-dept">{getDept()}</span>
+          <span className="user-dept">{hospitalDecode[User.hospital_id]?.dept[User.dept_id]}</span>
           <span className="user-level">{getLevel()}</span>
         </UserInfo>
         <UserData>
           <DataRow>
             <span className="label">남은 연차</span>
             <ProgressBar>
-              <Progress className="annual" $percent={percentData(User.annual, 15)}></Progress>
+              <Progress className="annual" $percent={percentData(User.annual, 20)}></Progress>
             </ProgressBar>
             <span>{User.annual}일</span>
           </DataRow>
           <DataRow>
             <span className="label">이번달 당직</span>
             <ProgressBar>
-              <Progress className="duty" $percent={percentData(User.duty, 15)}></Progress>
+              <Progress className="duty" $percent={percentData(User.duty, 20)}></Progress>
             </ProgressBar>
             <span>{User.duty}일</span>
           </DataRow>
         </UserData>
         <AnnualBtn />
         <DutyBtn />
-        <LogoutBtn>로그아웃</LogoutBtn>
+        <LogoutBtn onClick={handleClickLogout}>로그아웃</LogoutBtn>
         <Mark>©Dr.Cal</Mark>
       </Wrapper>
     </Container>
@@ -170,6 +179,7 @@ const SideBar = () => {
 export default SideBar;
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
