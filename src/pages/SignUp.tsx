@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import {
@@ -24,6 +25,9 @@ interface SignUpBody {
 }
 
 const SignUp = () => {
+  const [hospitalInfoList, setHospitalInfoList] = useState([]);
+  const [hospitalList, setHospitalList] = useState([]);
+
   const {
     register,
     handleSubmit,
@@ -33,15 +37,45 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
-  console.log(
-    '병원명 출력 확인',
-    Object.values(hospitalDecode).map(v => v.hospital),
-  );
+  const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com/';
 
-  console.log(
-    '해당 병원의 파트 출력 확인',
-    Object.values(hospitalDecode).map(v => v.dept),
-  );
+  // 등록된 병원 리스트 확인 (Select Box)
+  const getHospitalList = () => {
+    axios.get(`${url}hospital/list`).then(res => {
+      if (res.status === 200) {
+        console.log('병원 리스트 호출 성공');
+        console.log(res.data.item);
+        console.log(
+          '병원명 리스트, id 확인',
+          res.data.item.map(v => `${v.hospitalName}+${v.hospitalId}`),
+        );
+        const hospitalNames = res.data.item.map(v => v.hospitalName);
+        const hospitalInfo = res.data.item.map(v => `${v.hospitalName}+${v.hospitalId}`);
+        setHospitalInfoList(hospitalInfo);
+        setHospitalList(hospitalNames);
+      }
+    });
+  };
+
+  // 선택한 병원의 과 확인 (Select Box)
+  const getHospitalDeptList = (hospitalName): string => {
+    console.log('선택한 병원명 : ', hospitalName);
+    console.log(hospitalInfoList);
+    const hospitalId = '';
+    console.log('병원ID : ', hospitalId);
+    if (hospitalId.length) {
+      console.log('실행됨');
+      axios.get(`${url}duty/${hospitalId}/list`).then(res => {
+        if (res.status === 200) {
+          console.log(res);
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    getHospitalList();
+  }, []);
 
   // 회원가입 핸들러
   const userSignUp = ({ email, password, name, hospital, dept, phone }: SignUpBody) => {
@@ -53,15 +87,15 @@ const SignUp = () => {
       dept,
       phone,
     };
-    axios.post('/user/register', body).then(res => {
+    axios.post(`${url}user/register`, body).then(res => {
       if (res.status === 200) {
+        console.log('회원가입 body', body);
         console.log('회원가입 성공', res);
         if (confirm('회원가입 성공!\n로그인 페이지로 이동하시겠습니까?')) {
           navigate('/login');
         }
       }
     });
-    console.log('회원가입 정보 확인', body);
   };
 
   return (
@@ -116,13 +150,24 @@ const SignUp = () => {
             <Label>
               Hospital
               {errors?.hospital && <Error>{errors.hospital.message}</Error>}
-              <Select required {...register('hospital', hospitalValidation)}>
+              <Select
+                required
+                {...register('hospital', hospitalValidation)}
+                onChange={e => getHospitalDeptList(e.target.value)}
+              >
                 <option value="" selected disabled hidden>
                   재직중인 병원을 선택해 주세요.
                 </option>
-                {Object.values(hospitalDecode).map(v => (
-                  <option value={v.hospital}>{v.hospital}</option>
+                {hospitalList.map((v, i) => (
+                  <option key={i} value={v}>
+                    {v.split('+')[0]}
+                  </option>
                 ))}
+                {/* {Object.values(hospitalDecode).map((v, i) => (
+                  <option key={i} value={v.hospital}>
+                    {v.hospital}
+                  </option>
+                ))} */}
               </Select>
             </Label>
             <Label>
