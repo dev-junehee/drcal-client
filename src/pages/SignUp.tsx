@@ -231,28 +231,7 @@ const Input = styled.input`
   font-family: 'Pretendard', sans-serif;
 `;
 
-const Select = styled.select`
-  padding-left: 16px;
-  border: 1px solid ${props => props.theme.gray};
-  border-radius: 8px;
-  margin-top: 8px;
-  font-family: 'Pretendard', sans-serif;
-  /* 브라우저 기본 디자인 숨기기 */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  /* 새로운 화살표 디자인 추가 */
-  background: url(/arrow.png) calc(100% - 16px) center no-repeat;
-  background-size: 14px;
-  background-color: ${props => props.theme.white};
-  &:required:invalid {
-    color: gray;
-  }
-  select,
-  option {
-    color: black;
-  }
-`;
+const Select = styled.select``;
 
 const Error = styled.span`
   margin-left: 10px;
