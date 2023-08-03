@@ -70,7 +70,7 @@ const GlobalStyle = createGlobalStyle`
     border: 1px solid ${props => props.theme.secondary};
     box-shadow: 0 0 6px 3px rgba(156, 184, 255, 0.3);
     }
-  &:required:invalid {
+  &:required {
     color: gray;
   }
   select,
