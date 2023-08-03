@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import {
@@ -10,7 +11,6 @@ import {
 } from '@/lib/Validation';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
-import { hospitalDecode } from '@/utils/decode';
 import axios from 'axios';
 
 interface SignUpBody {
@@ -24,6 +24,11 @@ interface SignUpBody {
 }
 
 const SignUp = () => {
+  const [hospitalList, setHospitalList] = useState<string[]>([]);
+  const [hospitalInfo, setHospitalInfo] = useState([]);
+  const [hospitalDeptList, setHospitalDeptList] = useState<string[]>([]);
+  const [hospitalDeptInfo, setHospitalDeptInfo] = useState([]);
+
   const {
     register,
     handleSubmit,
@@ -33,35 +38,75 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
-  console.log(
-    '병원명 출력 확인',
-    Object.values(hospitalDecode).map(v => v.hospital),
-  );
+  const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
 
-  console.log(
-    '해당 병원의 파트 출력 확인',
-    Object.values(hospitalDecode).map(v => v.dept),
-  );
+  // 등록된 병원 리스트 확인 (Select Box)
+  const getHospitalList = () => {
+    axios.get(`${url}/hospital/list`).then(res => {
+      if (res.status === 200) {
+        console.log('병원 리스트 호출 성공', res.data.item);
+        setHospitalInfo(res.data.item);
+        const hospitalNames = res.data.item.map((v: { hospitalName: string }) => v.hospitalName);
+        setHospitalList(hospitalNames);
+      }
+    });
+  };
+
+  // 선택한 병원의 과 확인 (Select Box)
+  const getHospitalDeptList = async (hospitalName: string) => {
+    console.log('선택한 병원명 : ', hospitalName);
+    console.log('병원들 : ', hospitalList);
+    const hospitalId: number = hospitalList.indexOf(hospitalName) + 1;
+    console.log('병원ID : ', hospitalId);
+    if (hospitalId) {
+      await axios
+        .get(`${url}/dept/${hospitalId}/list`)
+        .then(res => {
+          if (res.status === 200) {
+            setHospitalDeptInfo(Object.values(res.data.item));
+            console.log('과 정보', hospitalDeptInfo);
+            const deptList = Object.values(
+              res.data.item
+                .map((v: { deptName: string }) => v.deptName)
+                .sort((a: number, b: number) => (a < b ? -1 : 1)),
+            );
+            setHospitalDeptList(deptList);
+          }
+        })
+        .catch(error => console.log(error));
+    }
+  };
+
+  useEffect(() => {
+    getHospitalList();
+  }, []);
 
   // 회원가입 핸들러
-  const userSignUp = ({ email, password, name, hospital, dept, phone }: SignUpBody) => {
+  const userSignUp = async ({ email, password, name, hospital, dept, phone }: SignUpBody) => {
+    const hospital_id = hospitalInfo.find(v => v.hospitalName === hospital).hospitalId;
+    const dept_id = hospitalDeptInfo.find(v => v.deptName === dept).deptId;
+    console.log(hospital_id, dept_id);
     const body = {
       email,
       password,
       name,
-      hospital,
-      dept,
+      hospital_id,
+      dept_id,
       phone,
     };
-    axios.post('/user/register', body).then(res => {
-      if (res.status === 200) {
-        console.log('회원가입 성공', res);
-        if (confirm('회원가입 성공!\n로그인 페이지로 이동하시겠습니까?')) {
-          navigate('/login');
+    console.log(body);
+    await axios
+      .post(`${url}/user/register`, body)
+      .then(res => {
+        if (res.status === 200) {
+          console.log('회원가입 body', body);
+          console.log('회원가입 성공', res);
+          if (confirm('회원가입 성공!\n로그인 페이지로 이동하시겠습니까?')) {
+            navigate('/login');
+          }
         }
-      }
-    });
-    console.log('회원가입 정보 확인', body);
+      })
+      .catch(error => console.log('회원가입 실패', error));
   };
 
   return (
@@ -116,25 +161,39 @@ const SignUp = () => {
             <Label>
               Hospital
               {errors?.hospital && <Error>{errors.hospital.message}</Error>}
-              <Select required {...register('hospital', hospitalValidation)}>
-                <option value="" selected disabled hidden>
-                  재직중인 병원을 선택해 주세요.
+              <select
+                required
+                defaultValue="default"
+                {...register('hospital', hospitalValidation)}
+                onChange={e => getHospitalDeptList(e.target.value)}
+              >
+                <option value="default" disabled hidden>
+                  재직 병원을 선택해 주세요.
                 </option>
-                {Object.values(hospitalDecode).map(v => (
-                  <option value={v.hospital}>{v.hospital}</option>
+                {hospitalList.map((v, i) => (
+                  <option key={i} value={v}>
+                    {v}
+                  </option>
                 ))}
-              </Select>
+              </select>
             </Label>
             <Label>
               Part
               {errors?.dept && <Error>{errors.dept.message}</Error>}
-              <Select required {...register('dept', deptValidation)}>
-                <option className="default" value="" selected disabled hidden>
-                  근무중인 파트를 선택해 주세요.
+              <select required defaultValue="default" {...register('dept', deptValidation)}>
+                <option value="default" disabled hidden>
+                  근무 파트를 선택해 주세요.
                 </option>
-                <option value="응급의학과">응급의학과</option>
-                <option value="산부인과">산부인과</option>
-              </Select>
+                {hospitalDeptList ? (
+                  hospitalDeptList.map((v, i) => (
+                    <Option className="default" key={i} value={v}>
+                      {v}
+                    </Option>
+                  ))
+                ) : (
+                  <></>
+                )}
+              </select>
             </Label>
             <Label>
               Phone Number
@@ -231,7 +290,11 @@ const Input = styled.input`
   font-family: 'Pretendard', sans-serif;
 `;
 
-const Select = styled.select``;
+const Option = styled.option`
+  &.default {
+    color: red;
+  }
+`;
 
 const Error = styled.span`
   margin-left: 10px;
