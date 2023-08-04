@@ -1,18 +1,19 @@
-import { useRef, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { PWValidation } from '@/lib/Validation';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
 import axios from 'axios';
+import { UserData } from '@/lib/types';
 
 interface EditPasswordBody {
   oldPassword: string;
   newPassword: string;
+  pwCheck: string;
 }
 
 const UserInfo = () => {
-  const [profileImg, setProfileImg]: string | null = useState('/public/user.png');
-  const imgRef = useRef();
+  const [user, setUser] = useState<UserData>({});
 
   const {
     register,
@@ -22,59 +23,94 @@ const UserInfo = () => {
     reset,
   } = useForm<EditPasswordBody>({ mode: 'onChange' });
 
+  const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
+  const token =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdW5laGVlQGRyY2FsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJFM1OE9maHU3Rk40WlZmYXRWZG1FMHV4VGd4Yi9VRW1hVjljLkx3YlFpMzZicVNGeDdRVWJ5IiwiYXV0aCI6IlVTRVIiLCJpZCI6MTEsImV4cCI6MTY5MTMwMzY4OCwidXNlcm5hbWUiOiLquYDspIDtnawiLCJzdGF0dXMiOiJBUFBST1ZFRCJ9._OLxe0Uu5Anjj8jE_0zOejha07qDFK01Gyl36FAMmQNDCVk7xgAiVXVyoE78pmOqKbfHRKTZtuhsQBoex_O3OQ';
+
+  // 개인정보 조회
+  const getUserInfo = async () => {
+    await axios
+      .get(`${url}/user/myPage`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        if (res.status === 200) {
+          console.log(res.data.item);
+          setUser(res.data.item);
+        }
+      })
+      .catch(error => console.error('마이페이지 조회 실패', error));
+  };
+
   // 비밀번호 수정 핸들러
-  const onSubmit = ({ oldPassword, newPassword }: EditPasswordBody) => {
+  const editUserPassword = ({ oldPassword, newPassword }: EditPasswordBody) => {
     console.log('old PW: ', oldPassword);
     console.log('new PW: ', newPassword);
     const body = {
-      oldPassword,
-      newPassword,
+      new_password: newPassword,
+      old_password: oldPassword,
     };
     axios
-      .post('/user/updatePassword/{id}', body)
+      .post(`${url}/user/updatePassword`, body, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(res => {
-        if (res.success) {
+        if (res.status === 200) {
           console.log('비밀번호 변경 성공!', res);
+          alert('비밀번호 변경 성공!');
+          location.reload();
         }
       })
       .catch(error => console.log('비밀번호 변경 실패', error));
   };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   return (
     <Container>
       <Title>
         <h2>비밀번호 수정</h2>
       </Title>
-      <FormWrapper onSubmit={handleSubmit(onSubmit)}>
+      <FormWrapper onSubmit={handleSubmit(editUserPassword)}>
         <Label>
           Password
+          {errors?.oldPassword && <Error>{errors.oldPassword.message}</Error>}
           <Input
             type="password"
+            maxLength={20}
             placeholder="현재 비밀번호를 입력해 주세요."
-            maxLength={16}
-            {...(register('password'), PWValidation)}
+            {...register('oldPassword', PWValidation)}
           />
         </Label>
         <Label>
           New Password
+          {errors?.newPassword && <Error>{errors.newPassword.message}</Error>}
           <Input
             type="password"
+            maxLength={20}
             placeholder="8자 이상의 새 비밀번호를 입력해 주세요."
-            maxLength={16}
-            {...(register('password'), PWValidation)}
+            {...register('newPassword', PWValidation)}
           />
         </Label>
         <Label>
           New Password Check
+          {errors?.pwCheck && <Error>{errors.pwCheck.message}</Error>}
           <Input
             type="password"
             placeholder="새 비밀번호를 다시 입력해 주세요."
-            maxLength={16}
-            {...register('ConfirmPW', {
-              required: '비밀번호는 필수 입력입니다.',
+            {...register('pwCheck', {
+              required: '비밀번호 확인은 필수 입력입니다.',
               validate: {
-                value: (val: string | undefined) => {
-                  if (watch('password') !== val) return '비밀번호가 일치하지 않습니다.';
+                value: (pw: string | undefined) => {
+                  if (watch('newPassword') !== pw) return '비밀번호가 일치하지 않습니다.';
                 },
               },
             })}
@@ -114,13 +150,13 @@ const FormWrapper = styled.form`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 24px;
+  gap: 18px;
   width: 500px;
   height: 400px;
 `;
 
 const Label = styled.label`
-  width: 340px;
+  width: 320px;
   /* border: 1px solid red; */
   font-family: 'ABeeZee', sans-serif;
   font-size: 0.8rem;
@@ -147,6 +183,12 @@ const Input = styled.input`
   &.profile-img {
     display: none;
   }
+`;
+
+const Error = styled.span`
+  margin-left: 10px;
+  font-size: 0.7rem;
+  color: ${props => props.theme.red};
 `;
 
 const EditBtnWrapper = styled.div`
