@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
-// import { data } from '@/MockData/User';
 import { UserData } from '@/lib/types';
 import { hospitalDecode } from '@/utils/decode';
 import axios from 'axios';
@@ -10,15 +9,16 @@ import { PWValidation } from '@/lib/Validation';
 
 interface EditProfileBody {
   name: string;
-  deptId: number;
+  deptName: string;
   phone: string;
   profileImageUrl: string;
 }
 
 const UserInfo = () => {
   const [user, setUser] = useState<UserData>();
-  const [profileImg, setProfileImg]: string | null = useState('/user.png');
+  const [profileImg, setProfileImg]: string = useState('');
   const [passwordChecked, setPasswordChecked]: boolean = useState(false);
+  const [hospitalDeptInfo, setHospitalDeptInfo] = useState([]);
   const imgRef = useRef();
 
   const {
@@ -29,15 +29,35 @@ const UserInfo = () => {
   } = useForm<SignUpBody>({ mode: 'onChange' });
 
   const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
+  const token =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdW5laGVlQGRyY2FsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJFM1OE9maHU3Rk40WlZmYXRWZG1FMHV4VGd4Yi9VRW1hVjljLkx3YlFpMzZicVNGeDdRVWJ5IiwiYXV0aCI6IlVTRVIiLCJpZCI6MTEsImV4cCI6MTY5MTMwMzY4OCwidXNlcm5hbWUiOiLquYDspIDtnawiLCJzdGF0dXMiOiJBUFBST1ZFRCJ9._OLxe0Uu5Anjj8jE_0zOejha07qDFK01Gyl36FAMmQNDCVk7xgAiVXVyoE78pmOqKbfHRKTZtuhsQBoex_O3OQ';
+
+  // 개인정보 조회
+  const getUserInfo = async () => {
+    await axios
+      .get(`${url}/user/myPage`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        if (res.status === 200) {
+          console.log(res.data.item);
+          setUser(res.data.item);
+        }
+      })
+      .catch(error => console.error('마이페이지 조회 실패', error));
+  };
 
   // 비밀번호 확인
-  const checkPassword = (password: string) => {
-    axios
+  const checkPassword = async (password: string) => {
+    await axios
       .post(
         `${url}/user/login`,
         {
-          email: 'chacha@drcal.com',
-          password,
+          email: user.email,
+          password: password.password,
         },
         {
           headers: {
@@ -54,36 +74,27 @@ const UserInfo = () => {
       .catch(error => console.log('비밀번호 확인 실패', error));
   };
 
-  // 개인정보 조회
-  const getUserInfo = async () => {
-    await axios
-      .get(`${url}/user/myPage`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      })
-      .then(res => {
-        if (res.status === 200) {
-          console.log(res.data.item);
-          setUser(res.data.item);
-        }
-      })
-      .catch(error => console.error('마이페이지 조회 실패', error));
-  };
-
   // 개인정보 수정
-  const editUserInfo = ({ name, deptId, phone, profileImageUrl }: EditProfileBody) => {
+  const editUserInfo = ({ name, deptName, phone, profileImageUrl }: EditProfileBody) => {
+    const deptId = hospitalDeptInfo.find(v => v.deptName === dept).deptId;
     const body = {
       name,
       deptId,
       phone,
       profileImageUrl,
     };
-    axios.post(`${url}/editUser`, body).then(res => {
-      if (res.status === 200) {
-        console.log('개인정보 수정 성공!', res);
-      }
-    });
+    axios
+      .post(`${url}/editUser`, body, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        if (res.status === 200) {
+          console.log('개인정보 수정 성공!', res);
+        }
+      });
   };
 
   useEffect(() => {
@@ -126,14 +137,10 @@ const UserInfo = () => {
           <Title>
             <h2>개인정보 수정</h2>
           </Title>
-          <FormWrapper id="user-info">
+          <FormWrapper id="user-info" onSubmit={handleSubmit(editUserInfo)}>
             <Label className="profile">
               <ProfileImgWrapper>
-                <img
-                  src={profileImg ? profileImg : '/images/user.png'}
-                  alt="프로필 이미지"
-                  onClick={uploadProfileImg}
-                />
+                <img src={profileImg ? profileImg : '/user.png'} alt="프로필 이미지" onClick={uploadProfileImg} />
               </ProfileImgWrapper>
               <ProfileImgEdit>변경</ProfileImgEdit>
               <Input type="file" accept="image/*" className="profile-img" />
@@ -144,7 +151,11 @@ const UserInfo = () => {
             </Label>
             <Label>
               Hospital
-              <Select></Select>
+              <Select defaultValue={hospitalDecode[user?.hospital_id]?.hospital}>
+                <option value={hospitalDecode[user?.hospital_id]?.hospital}>
+                  {hospitalDecode[user?.hospital_id]?.hospital}
+                </option>
+              </Select>
             </Label>
             <Label>
               Part
@@ -157,7 +168,7 @@ const UserInfo = () => {
               <Input type="text" defaultValue={user?.phone} />
             </Label>
             <EditBtnWrapper>
-              <Btn content="수정하기" onSubmit={editUserInfo} />
+              <Btn content="수정하기" />
             </EditBtnWrapper>
           </FormWrapper>
         </UserInfoContainer>
@@ -248,7 +259,7 @@ const FormWrapper = styled.form`
 
 const Label = styled.label`
   width: 320px;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   font-family: 'ABeeZee', sans-serif;
   font-size: 0.8rem;
   &.profile {
