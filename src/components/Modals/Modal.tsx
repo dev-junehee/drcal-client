@@ -58,7 +58,7 @@ export const ModalTitle = styled.div`
   font-weight: bold;
   font-size: 24px;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 `;
 export const ModalCloseButton = styled.div`
   cursor: pointer;

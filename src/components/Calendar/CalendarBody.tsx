@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { styled } from 'styled-components';
 import axios from 'axios';
+import { useModal } from '@/hooks/useModal';
+import { CalAnnualModal } from '../Modals/CalAnnualModal';
+import { CalDutylModal } from '../Modals/CalDutyModal';
 
 interface Calendar {
   id: number;
@@ -57,11 +60,32 @@ const CalendarBody = ({
     getUser();
   }, []);
 
+  const { openModal } = useModal();
+
   const handleClickDuty = (date: dayjs.Dayjs) => {
+    const clickDate = date.format('YYYY-MM-DD');
+
+    const modalData = {
+      isOpen: true,
+      title: '금일 응급실 당직',
+      content: <CalDutylModal date={clickDate} />,
+    };
+
+    openModal(modalData);
+
     console.log('당직클릭', date.format('YYYY-MM-DD'));
   };
 
   const handleClickAnnual = (date: dayjs.Dayjs) => {
+    const clickDate = date.format('YYYY-MM-DD');
+
+    const modalData = {
+      isOpen: true,
+      title: '금일 휴가 인원',
+      content: <CalAnnualModal date={clickDate} />,
+    };
+
+    openModal(modalData);
     console.log('휴가클릭', date.format('YYYY-MM-DD'));
   };
 
