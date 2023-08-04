@@ -4,6 +4,8 @@ import Btn from '@/components/Buttons/Btn';
 import SignUpValidation from '@/lib/Validation/validation';
 import { useForm } from 'react-hook-form';
 import { FiAlertCircle } from 'react-icons/fi';
+import { postLogin } from '@/lib/api/miniAPI';
+import { useState } from 'react';
 
 type FormData = {
   email: string;
@@ -11,6 +13,8 @@ type FormData = {
 };
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const {
     register,
@@ -21,13 +25,20 @@ const Login = () => {
 
   const onSubmit = async (data: FormData) => {
     const validationErrors = SignUpValidation(data);
+    setEmail(data.email);
+    setPassword(data.password);
 
     if (Object.keys(validationErrors).length > 0) {
       Object.entries(validationErrors).forEach(([field, message]) => {
         setError(field, { type: 'manual', message });
       });
     } else {
+      //API호출
       console.log(data);
+      await postLogin({
+        email,
+        password,
+      });
       navigate('/');
     }
   };
