@@ -121,7 +121,9 @@ const SideBar = () => {
 
   return (
     <Container>
-      <Logo>Dr.Cal</Logo>
+      <NavLink to={'/'}>
+        <Logo></Logo>
+      </NavLink>
       <Menu>
         <MenuItem to="/" onClick={handleClickMenu}>
           <AiOutlineClockCircle />
@@ -189,11 +191,14 @@ const Container = styled.div`
   background-color: ${props => props.theme.white};
 `;
 
-const Logo = styled.span`
-  margin-top: 40px;
-  font-size: 2rem;
-  font-weight: 700;
-  color: ${props => props.theme.primary};
+const Logo = styled.div`
+  margin-top: 60px;
+  background-image: url('src/assets/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 160px;
+  height: 35px;
+  background-position: center;
 `;
 
 const Menu = styled.div`
