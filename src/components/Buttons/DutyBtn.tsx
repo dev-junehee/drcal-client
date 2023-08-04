@@ -1,7 +1,17 @@
 import styled from 'styled-components';
+import { useModal } from '@/hooks/useModal';
+import { RequestModal } from '../Modals/RequestModal';
 
 const DutyBtn = () => {
-  return <Container>당직 수정</Container>;
+  const { openModal } = useModal();
+
+  const modalData = {
+    isOpen: true,
+    title: '당직 수정 신청',
+    content: <RequestModal type={'duty'} />,
+  };
+
+  return <Container onClick={() => openModal(modalData)}>당직 수정</Container>;
 };
 
 export default DutyBtn;

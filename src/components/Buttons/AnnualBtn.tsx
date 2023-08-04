@@ -1,7 +1,17 @@
+import { useModal } from '@/hooks/useModal';
 import styled from 'styled-components';
+import { RequestModal } from '../Modals/RequestModal';
 
 const AnnualBtn = () => {
-  return <Container>휴가 신청</Container>;
+  const { openModal } = useModal();
+
+  const modalData = {
+    isOpen: true,
+    title: '휴가 신청',
+    content: <RequestModal type={'annual'} />,
+  };
+
+  return <Container onClick={() => openModal(modalData)}>휴가 신청</Container>;
 };
 
 export default AnnualBtn;
