@@ -3,10 +3,11 @@ import { useForm } from 'react-hook-form';
 import { PWValidation } from '@/lib/Validation';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
+import axios from 'axios';
 
 interface EditPasswordBody {
-  password: string;
-  ConfirmPW: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
 const UserInfo = () => {
@@ -22,8 +23,21 @@ const UserInfo = () => {
   } = useForm<EditPasswordBody>({ mode: 'onChange' });
 
   // 비밀번호 수정 핸들러
-  const onSubmit = (data: EditPasswordBody) => {
-    console.log('비밀번호 수정', data);
+  const onSubmit = ({ oldPassword, newPassword }: EditPasswordBody) => {
+    console.log('old PW: ', oldPassword);
+    console.log('new PW: ', newPassword);
+    const body = {
+      oldPassword,
+      newPassword,
+    };
+    axios
+      .post('/user/updatePassword/{id}', body)
+      .then(res => {
+        if (res.success) {
+          console.log('비밀번호 변경 성공!', res);
+        }
+      })
+      .catch(error => console.log('비밀번호 변경 실패', error));
   };
 
   return (
@@ -40,11 +54,15 @@ const UserInfo = () => {
             maxLength={16}
             {...(register('password'), PWValidation)}
           />
-          {errors?.password && <span>{errors.password.message}</span>}
         </Label>
         <Label>
           New Password
-          <Input type="password" placeholder="8자 이상의 새 비밀번호를 입력해 주세요." />
+          <Input
+            type="password"
+            placeholder="8자 이상의 새 비밀번호를 입력해 주세요."
+            maxLength={16}
+            {...(register('password'), PWValidation)}
+          />
         </Label>
         <Label>
           New Password Check
@@ -74,10 +92,11 @@ export default UserInfo;
 
 const Container = styled.div`
   display: flex;
+  justify-content: center;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: 70%;
   gap: 20px;
 `;
 
