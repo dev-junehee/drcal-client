@@ -25,7 +25,7 @@ const UserInfo = () => {
 
   const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
   const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdW5laGVlQGRyY2FsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJFM1OE9maHU3Rk40WlZmYXRWZG1FMHV4VGd4Yi9VRW1hVjljLkx3YlFpMzZicVNGeDdRVWJ5IiwiYXV0aCI6IlVTRVIiLCJpZCI6MTEsImV4cCI6MTY5MTMwMzY4OCwidXNlcm5hbWUiOiLquYDspIDtnawiLCJzdGF0dXMiOiJBUFBST1ZFRCJ9._OLxe0Uu5Anjj8jE_0zOejha07qDFK01Gyl36FAMmQNDCVk7xgAiVXVyoE78pmOqKbfHRKTZtuhsQBoex_O3OQ';
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdW5laGVlQGRyY2FsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJElVdUMzLlAzYVJ0RUcwZ2QxNWdaUy5tam9BemdWYjdvbmdYTWdXN3c1WnVVZkVtTlA3QVBTIiwiYXV0aCI6IlVTRVIiLCJpZCI6MTEsImV4cCI6MTY5MTM5NTk1MywidXNlcm5hbWUiOiLquYDspIDtnawiLCJzdGF0dXMiOiJBUFBST1ZFRCJ9.bcjiqSf7OTpTAAEDDuCUDZwzAWVG8JC7GZpmH5HJeCrbnjl0mjIrNuEGl-CNRMg4s8bprmtFSDqy_4XkDH7lOQ';
 
   // 개인정보 조회
   const getUserInfo = async () => {
@@ -63,8 +63,12 @@ const UserInfo = () => {
       .then(res => {
         if (res.status === 200) {
           console.log('비밀번호 변경 성공!', res);
-          alert('비밀번호 변경 성공!');
-          location.reload();
+          if (confirm('비밀번호가 성공적으로 변경되었습니다.\n다시 로그인 하시겠습니까?')) {
+            // 재로그인 유도 : 토큰 삭제 + navigate('/login')
+            console.log('재로그인 유도 코드');
+          } else {
+            location.reload();
+          }
         }
       })
       .catch(error => console.log('비밀번호 변경 실패', error));

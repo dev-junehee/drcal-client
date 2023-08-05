@@ -1,25 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
 import { UserData } from '@/lib/types';
 import { hospitalDecode } from '@/utils/decode';
 import axios from 'axios';
-import { PWValidation } from '@/lib/Validation';
+import { PWValidation, nameValidation, phoneValidation, hospitalValidation, deptValidation } from '@/lib/Validation';
+import userImg from '/user.png';
 
 interface EditProfileBody {
   name: string;
   deptName: string;
   phone: string;
-  profileImageUrl: string;
+  image: string;
 }
 
 const UserInfo = () => {
-  const [user, setUser] = useState<UserData>();
-  const [profileImg, setProfileImg]: string = useState('');
+  const [user, setUser] = useState<UserData>({});
+  // const [profileImg, setProfileImg]: string = useState('');
   const [passwordChecked, setPasswordChecked]: boolean = useState(false);
   const [hospitalDeptInfo, setHospitalDeptInfo] = useState([]);
-  const imgRef = useRef();
 
   const {
     register,
@@ -30,7 +30,7 @@ const UserInfo = () => {
 
   const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
   const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdW5laGVlQGRyY2FsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJFM1OE9maHU3Rk40WlZmYXRWZG1FMHV4VGd4Yi9VRW1hVjljLkx3YlFpMzZicVNGeDdRVWJ5IiwiYXV0aCI6IlVTRVIiLCJpZCI6MTEsImV4cCI6MTY5MTMwMzY4OCwidXNlcm5hbWUiOiLquYDspIDtnawiLCJzdGF0dXMiOiJBUFBST1ZFRCJ9._OLxe0Uu5Anjj8jE_0zOejha07qDFK01Gyl36FAMmQNDCVk7xgAiVXVyoE78pmOqKbfHRKTZtuhsQBoex_O3OQ';
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdW5laGVlQGRyY2FsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJElVdUMzLlAzYVJ0RUcwZ2QxNWdaUy5tam9BemdWYjdvbmdYTWdXN3c1WnVVZkVtTlA3QVBTIiwiYXV0aCI6IlVTRVIiLCJpZCI6MTEsImV4cCI6MTY5MTM5NTk1MywidXNlcm5hbWUiOiLquYDspIDtnawiLCJzdGF0dXMiOiJBUFBST1ZFRCJ9.bcjiqSf7OTpTAAEDDuCUDZwzAWVG8JC7GZpmH5HJeCrbnjl0mjIrNuEGl-CNRMg4s8bprmtFSDqy_4XkDH7lOQ';
 
   // 개인정보 조회
   const getUserInfo = async () => {
@@ -50,7 +50,7 @@ const UserInfo = () => {
       .catch(error => console.error('마이페이지 조회 실패', error));
   };
 
-  // 비밀번호 확인
+  // 비밀번호 재확인
   const checkPassword = async (password: string) => {
     await axios
       .post(
@@ -74,27 +74,58 @@ const UserInfo = () => {
       .catch(error => console.log('비밀번호 확인 실패', error));
   };
 
+  // 병원의 과 확인 (Select Box)
+  const getDeptId = async (deptName: string) => {
+    await axios.get(`${url}/dept/${user.hospital_id}/list`).then(res => {
+      if (res.data.item.deptName === deptName) {
+        console.log(res.data.item);
+        return res.data.item.deptId;
+      }
+    });
+  };
+
+  // 병원 확인 (Select Box)
+  const getHospitalName = async (hospitalId: number) => {
+    await axios.get(`${url}/hospital/list`).then(res => {
+      if (res.data.item.hospitalId === hospitalId) {
+        console.log(res.data.item);
+        return res.data.item.hospitalName;
+      }
+    });
+  };
+
   // 개인정보 수정
-  const editUserInfo = ({ name, deptName, phone, profileImageUrl }: EditProfileBody) => {
-    const deptId = hospitalDeptInfo.find(v => v.deptName === dept).deptId;
-    const body = {
-      name,
-      deptId,
-      phone,
-      profileImageUrl,
-    };
-    axios
-      .post(`${url}/editUser`, body, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(res => {
-        if (res.status === 200) {
-          console.log('개인정보 수정 성공!', res);
-        }
-      });
+  const editUserInfo = ({
+    name = user.name,
+    deptName,
+    phone = user.phone,
+    image = user.profile_image_url,
+  }: EditProfileBody) => {
+    const deptId = getDeptId(deptName);
+    if (deptId !== undefined) {
+      const body = {
+        name,
+        deptId,
+        phone,
+        image,
+      };
+      console.log('확인하자', body);
+      console.log('이미지 업로드 확인', body.image[0].name);
+      axios
+        .post(`${url}/editUser`, body, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then(res => {
+          if (res.status === 200) {
+            console.log('개인정보 수정 성공!', res);
+            location.reload();
+          }
+        })
+        .catch(error => console.log('개인정보 수정 실패', error));
+    }
   };
 
   useEffect(() => {
@@ -138,20 +169,23 @@ const UserInfo = () => {
             <h2>개인정보 수정</h2>
           </Title>
           <FormWrapper id="user-info" onSubmit={handleSubmit(editUserInfo)}>
+            <ProfileImgWrapper>
+              <img src={userImg} alt="프로필 이미지" />
+            </ProfileImgWrapper>
             <Label className="profile">
-              <ProfileImgWrapper>
-                <img src={profileImg ? profileImg : '/user.png'} alt="프로필 이미지" onClick={uploadProfileImg} />
-              </ProfileImgWrapper>
               <ProfileImgEdit>변경</ProfileImgEdit>
-              <Input type="file" accept="image/*" className="profile-img" />
+              <Input type="file" accept="image/*" className="profile-img" {...register('image')} />
             </Label>
             <Label>
               name
-              <Input type="text" defaultValue={user?.name} />
+              <Input type="text" defaultValue={user?.name} {...register('name', nameValidation)} />
             </Label>
             <Label>
               Hospital
-              <Select defaultValue={hospitalDecode[user?.hospital_id]?.hospital}>
+              <Select
+                defaultValue={hospitalDecode[user?.hospital_id]?.hospital}
+                {...register('hospital', hospitalValidation)}
+              >
                 <option value={hospitalDecode[user?.hospital_id]?.hospital}>
                   {hospitalDecode[user?.hospital_id]?.hospital}
                 </option>
@@ -159,13 +193,13 @@ const UserInfo = () => {
             </Label>
             <Label>
               Part
-              <Select form="user-info">
+              <Select form="user-info" {...register('deptId', deptValidation)}>
                 {hospitalDecode[user?.hospital_id]?.dept.map(v => <option value={v}>{v}</option>)}
               </Select>
             </Label>
             <Label>
               Phone Number
-              <Input type="text" defaultValue={user?.phone} />
+              <Input type="text" defaultValue={user?.phone} {...register('phone', phoneValidation)} />
             </Label>
             <EditBtnWrapper>
               <Btn content="수정하기" />
