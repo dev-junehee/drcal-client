@@ -6,8 +6,8 @@ import { useForm } from 'react-hook-form';
 import { FiAlertCircle } from 'react-icons/fi';
 import { postLogin } from '@/lib/api/miniAPI';
 import { useEffect, useState } from 'react';
-import { LoginState } from '@/states/stateLogin';
-import { useRecoilState } from 'recoil';
+import { LoginState, UserState } from '@/states/stateLogin';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 type FormData = {
   email: string;
@@ -17,6 +17,7 @@ type FormData = {
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const setUserState = useSetRecoilState(UserState);
   const [isLoggedIn, setIsLoggedIn] = useRecoilState(LoginState);
   const navigate = useNavigate();
 
@@ -27,6 +28,7 @@ const Login = () => {
     formState: { errors },
   } = useForm<FormData>();
 
+  //로그인 된 상태로 /login 접속시 메인으로 강제 이동
   useEffect(() => {
     isLoggedIn && navigate('/');
   }, []);
@@ -43,11 +45,12 @@ const Login = () => {
     } else {
       //API호출
       console.log(data);
-      await postLogin({
+      const result = await postLogin({
         email,
         password,
       });
       setIsLoggedIn(true);
+      setUserState(result);
       navigate('/');
     }
   };
