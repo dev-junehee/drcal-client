@@ -5,7 +5,9 @@ import SignUpValidation from '@/lib/Validation/validation';
 import { useForm } from 'react-hook-form';
 import { FiAlertCircle } from 'react-icons/fi';
 import { postLogin } from '@/lib/api/miniAPI';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { LoginState } from '@/states/stateLogin';
+import { useRecoilState } from 'recoil';
 
 type FormData = {
   email: string;
@@ -15,13 +17,19 @@ type FormData = {
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(LoginState);
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
   } = useForm<FormData>();
+
+  useEffect(() => {
+    isLoggedIn && navigate('/');
+  }, []);
 
   const onSubmit = async (data: FormData) => {
     const validationErrors = SignUpValidation(data);
@@ -39,6 +47,7 @@ const Login = () => {
         email,
         password,
       });
+      setIsLoggedIn(true);
       navigate('/');
     }
   };
