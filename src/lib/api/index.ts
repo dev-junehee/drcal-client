@@ -10,9 +10,6 @@ import {
   EditDutyBody,
 } from '@/lib/types';
 
-const token =
-  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdW5laGVlQGRyY2FsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJElVdUMzLlAzYVJ0RUcwZ2QxNWdaUy5tam9BemdWYjdvbmdYTWdXN3c1WnVVZkVtTlA3QVBTIiwiYXV0aCI6IlVTRVIiLCJpZCI6MTEsImV4cCI6MTY5MTQwNzE3NywidXNlcm5hbWUiOiLquYDspIDtnawiLCJzdGF0dXMiOiJBUFBST1ZFRCJ9.6SYyop3cB2OuksAfp-_EfawM7eA0taaGx5E-vJYjm0COHv4DVhEfr4DjmzTT5giK4U1Pq_7Z2I6FRnqgYCg7FA';
-
 const instance = axios.create({
   baseURL: 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com',
   headers: {
@@ -20,11 +17,14 @@ const instance = axios.create({
   },
 });
 
+const authToken = localStorage.getItem('authToken');
+const token = authToken || '';
+
 const authInstance = axios.create({
   baseURL: 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com',
   headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
+    Authorization: `${token}`,
   },
 });
 
@@ -32,7 +32,7 @@ const authInstance = axios.create({
 export const login = async (body: LoginBody) => {
   try {
     const res = await instance.post('/user/login', body);
-    return res.data;
+    return res;
   } catch (error) {
     console.log('로그인 실패', error);
   }
