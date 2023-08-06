@@ -17,7 +17,8 @@ const Calendar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    !isLoggedIn && navigate('/');
+    !isLoggedIn && navigate('/login');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const prevMonth = () => {
