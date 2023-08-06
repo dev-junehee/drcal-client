@@ -1,15 +1,25 @@
 import CalendarHeader from '@/components/Calendar/CalendarHeader';
 import { styled } from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import CalendarBody from '@/components/Calendar/CalendarBody';
 import CalendarList from '@/components/Calendar/CalendarList';
+import { useRecoilValue } from 'recoil';
+import { LoginState } from '@/states/stateLogin';
+import { useNavigate } from 'react-router';
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(dayjs());
   const [toggleButton, settoggleButton] = useState(true);
   const [dutyActive, setdutyActive] = useState(false);
   const [annualActive, setannualActive] = useState(false);
+  const isLoggedIn = useRecoilValue(LoginState);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    !isLoggedIn && navigate('/login');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const prevMonth = () => {
     setCurrentMonth(prevMonth => prevMonth.subtract(1, 'month'));

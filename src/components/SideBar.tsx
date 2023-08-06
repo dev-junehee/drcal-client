@@ -8,6 +8,9 @@ import { FaRegPaperPlane } from 'react-icons/fa';
 import AnnualBtn from '@/components/Buttons/AnnualBtn';
 import DutyBtn from '@/components/Buttons/DutyBtn';
 import { hospitalDecode } from '@/utils/decode';
+import { logout } from '@/lib/api';
+import { useSetRecoilState } from 'recoil';
+import { LoginState, UserState } from '@/states/stateLogin';
 
 interface UserData {
   id: number;
@@ -65,6 +68,8 @@ const SideBar = () => {
   const [User, setUser] = useState<UserData>(initialUserData);
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [isMyPageActive, setIsMyPageActive] = useState('false');
+  const setIsLoggedIn = useSetRecoilState(LoginState);
+  const setUserState = useSetRecoilState(UserState);
 
   const navigate = useNavigate();
 
@@ -114,8 +119,11 @@ const SideBar = () => {
     setIsMyPageActive('true');
   };
 
-  const handleClickLogout = () => {
-    //토큰 받아오기 성공 이후 토큰날리기 작업 추가 필요
+  const handleClickLogout = async () => {
+    await logout();
+    localStorage.removeItem('authToken');
+    setIsLoggedIn(false);
+    setUserState('');
     navigate('/login');
   };
 
