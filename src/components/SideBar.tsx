@@ -10,7 +10,7 @@ import DutyBtn from '@/components/Buttons/DutyBtn';
 import { hospitalDecode } from '@/utils/decode';
 import { logout } from '@/lib/api';
 import { useSetRecoilState } from 'recoil';
-import { LoginState, UserState, authTokenState } from '@/states/stateLogin';
+import { LoginState, UserState } from '@/states/stateLogin';
 
 interface UserData {
   id: number;
@@ -69,7 +69,6 @@ const SideBar = () => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [isMyPageActive, setIsMyPageActive] = useState('false');
   const setIsLoggedIn = useSetRecoilState(LoginState);
-  const setAuthToken = useSetRecoilState(authTokenState);
   const setUserState = useSetRecoilState(UserState);
 
   const navigate = useNavigate();
@@ -123,7 +122,6 @@ const SideBar = () => {
   const handleClickLogout = async () => {
     await logout();
     localStorage.removeItem('authToken');
-    setAuthToken(null);
     setIsLoggedIn(false);
     setUserState('');
     navigate('/login');
