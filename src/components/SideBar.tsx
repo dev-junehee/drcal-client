@@ -1,35 +1,17 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { styled } from 'styled-components';
-import axios from 'axios';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 import { BsFillPersonFill } from 'react-icons/bs';
 import { FaRegPaperPlane } from 'react-icons/fa';
 import AnnualBtn from '@/components/Buttons/AnnualBtn';
 import DutyBtn from '@/components/Buttons/DutyBtn';
-import { hospitalDecode } from '@/utils/decode';
-import { logout } from '@/lib/api';
+import { dname, getLevel } from '@/utils/decode';
+import { logout, getMyPage2 } from '@/lib/api';
+import { UserData } from '@/lib/types';
 import { useSetRecoilState } from 'recoil';
 import { LoginState, UserState } from '@/states/stateLogin';
-
-interface UserData {
-  id: number;
-  emp_no: number;
-  name: string;
-  email: string;
-  phone: string;
-  hospital_id: number;
-  dept_id: number;
-  level: string;
-  auth: string;
-  status: string;
-  annual: number;
-  duty: number;
-  profile_image_url: string;
-  hiredate: string;
-  created_at: string;
-  updated_at: string;
-}
+import { UserIdState, HospitalIdState } from '@/states/stateUserId';
 
 interface MenuItemProps {
   to: string;
@@ -71,35 +53,21 @@ const SideBar = () => {
   const setIsLoggedIn = useSetRecoilState(LoginState);
   const setUserState = useSetRecoilState(UserState);
 
+  ///리코일
+  const setUserId = useSetRecoilState(UserIdState);
+  const setHospitalId = useSetRecoilState(HospitalIdState);
+  ///
+
   const navigate = useNavigate();
 
-  const getUser = async () => {
-    try {
-      const data = await axios.get('http://127.0.0.1:5173/daseul/User.json');
-      setUser(data.data.item);
-      return data;
-    } catch (error) {
-      console.warn(error);
-      console.warn('fail');
-      return false;
-    }
-  };
   useEffect(() => {
-    getUser();
+    (async () => {
+      const data = await getMyPage2();
+      setUser(data.item);
+      setUserId(data.item.id);
+      setHospitalId(data.item.hospital_id);
+    })();
   }, []);
-
-  //직급 구분 출력
-  const getLevel = () => {
-    if (User.level == 'PK') {
-      return '본과실습생';
-    } else if (User.level == 'INTERN') {
-      return '인턴';
-    } else if (User.level == 'RESIDENT') {
-      return '전공의';
-    } else if (User.level == 'FELLOW') {
-      return '전문의';
-    }
-  };
 
   //그래프 퍼센트 계산
   const percentData = (data: number, max: number) => {
@@ -158,25 +126,25 @@ const SideBar = () => {
       <Wrapper>
         <UserInfo>
           <span className="user-name">{User.name}</span>
-          <span className="user-dept">{hospitalDecode[User.hospital_id]?.dept[User.dept_id]}</span>
-          <span className="user-level">{getLevel()}</span>
+          <span className="user-dept">{dname[User.dept_id]}</span>
+          <span className="user-level">{getLevel(User.level)}</span>
         </UserInfo>
-        <UserData>
+        <UserSchedule>
           <DataRow>
             <span className="label">남은 연차</span>
             <ProgressBar>
-              <Progress className="annual" $percent={percentData(User.annual, 20)}></Progress>
+              <Progress className="annual" $percent={percentData(User.annual, 15)}></Progress>
             </ProgressBar>
             <span>{User.annual}일</span>
           </DataRow>
           <DataRow>
             <span className="label">이번달 당직</span>
             <ProgressBar>
-              <Progress className="duty" $percent={percentData(User.duty, 20)}></Progress>
+              <Progress className="duty" $percent={percentData(User.duty, 3)}></Progress>
             </ProgressBar>
             <span>{User.duty}일</span>
           </DataRow>
-        </UserData>
+        </UserSchedule>
         <AnnualBtn />
         <DutyBtn />
         <LogoutBtn onClick={handleClickLogout}>로그아웃</LogoutBtn>
@@ -283,7 +251,7 @@ const UserInfo = styled.div`
   }
 `;
 
-const UserData = styled.div`
+const UserSchedule = styled.div`
   display: flex;
   flex-direction: column;
   width: 240px;

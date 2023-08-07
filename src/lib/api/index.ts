@@ -68,6 +68,20 @@ export const getMyPage = async () => {
   }
 };
 
+// 마이페이지 다른헤더
+export const getMyPage2 = async () => {
+  try {
+    const res = await instance.get('/user/myPage', {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.log('마이페이지 조회 실패', error);
+  }
+};
+
 // 마이페이지 수정
 export const editMyPage = async (body: EditMyPageBody) => {
   try {
