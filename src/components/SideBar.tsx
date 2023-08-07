@@ -8,10 +8,9 @@ import AnnualBtn from '@/components/Buttons/AnnualBtn';
 import DutyBtn from '@/components/Buttons/DutyBtn';
 import { dname, getLevel } from '@/utils/decode';
 import { logout, getMyPage2 } from '@/lib/api';
-import { UserData } from '@/lib/types';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { LoginState, UserState } from '@/states/stateLogin';
-import { UserIdState, HospitalIdState } from '@/states/stateUserId';
+import { UserDataState } from '@/states/stateUserdata';
 
 interface MenuItemProps {
   to: string;
@@ -27,36 +26,12 @@ interface ProgressProps {
   $percent: number;
 }
 
-const initialUserData: UserData = {
-  id: 0,
-  emp_no: 0,
-  name: '',
-  email: '',
-  phone: '',
-  hospital_id: 0,
-  dept_id: 0,
-  level: '',
-  auth: '',
-  status: '',
-  annual: 0,
-  duty: 0,
-  profile_image_url: '',
-  hiredate: '',
-  created_at: '',
-  updated_at: '',
-};
-
 const SideBar = () => {
-  const [User, setUser] = useState<UserData>(initialUserData);
+  const [User, setUser] = useRecoilState(UserDataState);
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [isMyPageActive, setIsMyPageActive] = useState('false');
   const setIsLoggedIn = useSetRecoilState(LoginState);
   const setUserState = useSetRecoilState(UserState);
-
-  ///리코일
-  const setUserId = useSetRecoilState(UserIdState);
-  const setHospitalId = useSetRecoilState(HospitalIdState);
-  ///
 
   const navigate = useNavigate();
 
@@ -64,9 +39,8 @@ const SideBar = () => {
     (async () => {
       const data = await getMyPage2();
       setUser(data.item);
-      setUserId(data.item.id);
-      setHospitalId(data.item.hospital_id);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //그래프 퍼센트 계산

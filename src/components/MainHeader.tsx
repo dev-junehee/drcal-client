@@ -1,35 +1,18 @@
-import axios from 'axios';
-import { useState, useEffect } from 'react';
 import { hospitalDecode } from '@/utils/decode';
 import { MdOutlineLocalHospital } from 'react-icons/md';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import { UserDataState } from '@/states/stateUserdata';
 
 const MainHeader = () => {
-  const [hospitalName, setHospitalName] = useState('병원명');
-
-  // 유저 개인 정보 (mypage) - 재직 병원 확인
-  const getUserHospital = () => {
-    axios
-      .get('/junehee/mypage.json')
-      .then(res => {
-        if (res.status === 200) {
-          console.log('재직중인 병원 코드 확인', res.data.item.hospital_id);
-          const hospitalNum = res.data.item.hospital_id;
-          setHospitalName(hospitalDecode[hospitalNum].hospital);
-        }
-      })
-      .catch(error => console.error('재직 병원 코드 확인 실패', error));
-  };
-
-  useEffect(() => {
-    getUserHospital();
-  }, []);
+  const UserData = useRecoilValue(UserDataState);
+  const hospitalNum = UserData.hospital_id;
 
   return (
     <Container>
       <HosPitalName>
         <MdOutlineLocalHospital />
-        <span className="hospital-name">{hospitalName}</span>
+        {hospitalNum && <span className="hospital-name">{hospitalDecode[hospitalNum].hospital}</span>}
       </HosPitalName>
     </Container>
   );
