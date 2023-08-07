@@ -120,11 +120,7 @@ export const getAnnual = async (date: string) => {
 // 날짜별 당직 인원 조회
 export const getDuty = async (date: string) => {
   try {
-    const res = await instance.get(`/schedule/date?chooseDate=${date}&category=DUTY`, {
-      headers: {
-        Authorization: `${localStorage.getItem('authToken')}`,
-      },
-    });
+    const res = await instance.get(`/schedule/date?chooseDate=${date}&category=DUTY`);
     return res.data;
   } catch (error) {
     console.log('당직 인원 조회 실패', error);
@@ -139,6 +135,22 @@ export const getRequest = async (userId: number) => {
         Authorization: `${localStorage.getItem('authToken')}`,
       },
     });
+<<<<<<< HEAD
+=======
+    return res.data;
+  } catch (error) {
+    console.log('요청 내역 확인 실패', error);
+  }
+};
+
+export const getRequest2 = async (userId: number) => {
+  try {
+    const res = await instance.get(`/schedule/${userId}`, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
+>>>>>>> a46dad6 (:sparkles: Feat: 요청내역 연결)
     return res.data;
   } catch (error) {
     console.log('요청 내역 확인 실패', error);
