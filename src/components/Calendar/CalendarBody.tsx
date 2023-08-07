@@ -121,44 +121,46 @@ const CalendarBody = ({
       return (
         <div key={index} className={className()}>
           <span className="calendar-date">{dateObj.format('D')}</span>
-          {dutyactive && !annualactive ? (
-            <Duty onClick={() => handleClickDuty(dateObj)}>
-              <span className="duty-name">{arrDuty.length > 0 ? '• ' + arrDuty[0] : ''}</span>
-              <span>{arrDuty.length > 0 ? getLevel(arrDuty[1]) : ''}</span>
-            </Duty>
-          ) : (
-            ''
-          )}
-          {annualactive && !dutyactive ? (
-            <Annual onClick={() => handleClickAnnual(dateObj)}>
-              {arrAnnual.length > 0 ? '• 휴가' + arrAnnual.length + '명' : ''}
-            </Annual>
-          ) : (
-            ''
-          )}
+          {dutyactive && !annualactive
+            ? arrDuty.length > 0 && (
+                <Duty onClick={() => handleClickDuty(dateObj)}>
+                  <span className="duty-name">• {arrDuty[0]}</span>
+                  <span>{getLevel(arrDuty[1])}</span>
+                </Duty>
+              )
+            : ''}
+          {annualactive && !dutyactive
+            ? arrAnnual.length > 0 && (
+                <Annual onClick={() => handleClickAnnual(dateObj)}>• 휴가{arrAnnual.length}명</Annual>
+              )
+            : ''}
 
           {!annualactive && !dutyactive ? (
             <>
-              <Duty onClick={() => handleClickDuty(dateObj)}>
-                <span className="duty-name">{arrDuty.length > 0 ? '• ' + arrDuty[0] : ''}</span>
-                <span>{arrDuty.length > 0 ? getLevel(arrDuty[1]) : ''}</span>
-              </Duty>
-              <Annual onClick={() => handleClickAnnual(dateObj)}>
-                {arrAnnual.length > 0 ? '• 휴가' + arrAnnual.length + '명' : ''}
-              </Annual>
+              {arrDuty.length > 0 && (
+                <Duty onClick={() => handleClickDuty(dateObj)}>
+                  <span className="duty-name">• {arrDuty[0]}</span>
+                  <span>{getLevel(arrDuty[1])}</span>
+                </Duty>
+              )}
+              {arrAnnual.length > 0 && (
+                <Annual onClick={() => handleClickAnnual(dateObj)}>• 휴가{arrAnnual.length}명</Annual>
+              )}
             </>
           ) : (
             ''
           )}
           {annualactive && dutyactive ? (
             <>
-              <Duty onClick={() => handleClickDuty(dateObj)}>
-                <span className="duty-name">{arrDuty.length > 0 ? '• ' + arrDuty[0] : ''}</span>
-                <span>{arrDuty.length > 0 ? getLevel(arrDuty[1]) : ''}</span>
-              </Duty>
-              <Annual onClick={() => handleClickAnnual(dateObj)}>
-                {arrAnnual.length > 0 ? '• 휴가' + arrAnnual.length + '명' : ''}
-              </Annual>
+              {arrDuty.length > 0 && (
+                <Duty onClick={() => handleClickDuty(dateObj)}>
+                  <span className="duty-name">• {arrDuty[0]}</span>
+                  <span>{getLevel(arrDuty[1])}</span>
+                </Duty>
+              )}
+              {arrAnnual.length > 0 && (
+                <Annual onClick={() => handleClickAnnual(dateObj)}>• 휴가{arrAnnual.length}명</Annual>
+              )}
             </>
           ) : (
             ''
