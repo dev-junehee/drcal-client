@@ -37,6 +37,7 @@ export const ModalContainer = styled.div`
 export const ModalBody = styled.div`
   box-sizing: border-box;
   width: 550px;
+  min-height: 500px;
   color: ${props => props.theme.black};
   background-color: ${props => props.theme.white};
   border-radius: 8px;

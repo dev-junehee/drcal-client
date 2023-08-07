@@ -35,14 +35,14 @@ const Container = styled.div`
 const DateWrap = styled.div`
   color: ${props => props.theme.primary};
   font-weight: 700;
-  margin-bottom: 32px;
+  margin-bottom: 64px;
 `;
 const TableContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
   text-align: center;
-  gap: 8px;
+  gap: 16px;
 `;
 
 const DataWrap = styled.div`

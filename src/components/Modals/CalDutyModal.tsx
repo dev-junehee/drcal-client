@@ -25,10 +25,6 @@ export const CalDutylModal = ({ date }) => {
           </DataCard>
         </UserInfo>
       </UserWrap>
-      <InputContainer>
-        <div className="inputTitle">특이사항</div>
-        <div className="reasonBox">1교대</div>
-      </InputContainer>
     </Container>
   );
 };
@@ -56,28 +52,10 @@ const UserWrap = styled.div`
 const UserImg = styled.div`
   width: 140px;
   height: 140px;
-  background-image: url(/public/user.png);
+  background-image: url(/user.png);
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-`;
-
-const InputContainer = styled.div`
-  margin-top: 32px;
-  .inputTitle {
-    color: ${props => props.theme.gray};
-    margin-bottom: 8px;
-    font-family: 'ABeeZee', sans-serif;
-  }
-  .reasonBox {
-    box-sizing: border-box;
-    height: 92px;
-    width: 320px;
-    border: 1px solid ${props => props.theme.gray};
-    border-radius: 8px;
-    padding: 16px;
-    transition: all 0.3s;
-  }
 `;
 
 const UserInfo = styled.div`
