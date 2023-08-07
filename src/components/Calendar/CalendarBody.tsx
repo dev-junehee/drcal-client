@@ -1,39 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import dayjs from 'dayjs';
 import { styled } from 'styled-components';
-import axios from 'axios';
 import { useModal } from '@/hooks/useModal';
 import { CalAnnualModal } from '../Modals/CalAnnualModal';
 import { CalDutylModal } from '../Modals/CalDutyModal';
-
-interface Calendar {
-  id: number;
-  name: string;
-  level: string;
-  hospital_id: number;
-  category: string;
-  start_date: string;
-  end_date: string;
-  evaluation: string;
-}
-
-const getLevel = (level: string) => {
-  if (level === 'PK') {
-    return '본과실습생';
-  } else if (level === 'INTERN') {
-    return '인턴';
-  } else if (level === 'RESIDENT') {
-    return '전공의';
-  } else if (level === 'FELLOW') {
-    return '전문의';
-  }
-};
+import { Schedule } from '@/lib/types';
+import { getLevel } from '@/utils/decode';
 
 const CalendarBody = ({
+  scheduleData,
   currentMonth,
   dutyactive,
   annualactive,
 }: {
+  scheduleData: Schedule[];
   currentMonth: dayjs.Dayjs;
   dutyactive: boolean;
   annualactive: boolean;
@@ -42,23 +22,7 @@ const CalendarBody = ({
   const firstDayOfMonth = monthStart.day();
   const firstDate = monthStart.subtract(firstDayOfMonth, 'day');
 
-  const [calendarData, setCalendarData] = useState<Calendar[]>([]);
-
-  //달력 데이터 받아오기
-  const getUser = async () => {
-    try {
-      const data = await axios.get('http://127.0.0.1:5173/daseul/Calendar.json');
-      setCalendarData(data.data.item);
-      return data;
-    } catch (error) {
-      console.warn(error);
-      console.warn('fail');
-      return false;
-    }
-  };
-  useEffect(() => {
-    getUser();
-  }, []);
+  const [calendarData] = useState<Schedule[]>(scheduleData);
 
   const { openModal } = useModal();
 
@@ -72,7 +36,6 @@ const CalendarBody = ({
     };
 
     openModal(modalData);
-
     console.log('당직클릭', date.format('YYYY-MM-DD'));
   };
 
@@ -107,15 +70,14 @@ const CalendarBody = ({
       Object.keys(calendarData).map(item => {
         const index = parseInt(item, 10);
         const cal = calendarData[index];
-
         //휴가 출력
         if (cal.category === 'ANNUAL') {
-          if (dayjs(cal.end_date).diff(cal.start_date, 'day') > 0) {
-            const diffInDays = dayjs(cal.end_date).diff(cal.start_date, 'day');
+          if (dayjs(cal.endDate).diff(cal.startDate, 'day') > 0) {
+            const diffInDays = dayjs(cal.endDate).diff(cal.startDate, 'day');
 
             const dateRange = [];
             for (let i = 0; i <= diffInDays; i++) {
-              dateRange.push(dayjs(cal.start_date).add(i, 'day').format('YYYY-MM-DD'));
+              dateRange.push(dayjs(cal.startDate).add(i, 'day').format('YYYY-MM-DD'));
             }
 
             dateRange.map(item => {
@@ -124,43 +86,36 @@ const CalendarBody = ({
               }
             });
           } else {
-            if (cal.start_date === dateObj.format('YYYY-MM-DD')) {
+            if (cal.startDate === dateObj.format('YYYY-MM-DD')) {
               arrAnnual.push(cal.id);
             }
           }
         }
         //당직 출력
-        if (cal.category === 'DUTY' && cal.start_date === dateObj.format('YYYY-MM-DD')) {
+        if (cal.category === 'DUTY' && cal.startDate === dateObj.format('YYYY-MM-DD')) {
           arrDuty.push(cal.name, cal.level);
         }
       });
 
-      //클래스이름 부여
+      //스타일
       const className = () => {
         const className = 'dates';
         if (dateObj.format('M') !== currentMonth.format('M')) {
           if (34 < index && index < 42) {
             return className + ' outdate lastline';
+          } else if (index % 7 === 6) {
+            return className + ' outdate rightline';
           }
           return className + ' outdate';
         } else {
           if (dateObj.format('YYYY-MM-DD') == dayjs().format('YYYY-MM-DD')) {
             return className + ' today';
-          } else if (index % 7 === 0) {
-            if (34 < index && index < 42) {
-              return className + ' date-sun lastline';
-            }
-            return className + ' date-sun';
           } else if (index % 7 === 6) {
-            if (34 < index && index < 42) {
-              return className + ' date-sat lastline';
-            }
-            return className + ' date-sat';
+            return className + ' rightline';
+          } else if (34 < index && index < 42) {
+            return className + ' lastline';
           } else {
-            if (34 < index && index < 42) {
-              return className + ' date-weekday lastline';
-            }
-            return className + ' date-weekday';
+            return className;
           }
         }
       };
@@ -244,42 +199,32 @@ const Container = styled.div`
     border-right: 1px solid ${props => props.theme.gray};
     padding: 5px;
     font-weight: 700;
-    &:nth-child(35) {
-      border-right: none;
-    }
     //날짜
     .calendar-date {
       position: absolute;
       top: 5px;
       left: 5px;
     }
-    &:last-child {
-      border-right: none;
+    &.today {
+      border: 3px solid ${props => props.theme.secondary};
+      .calendar-date {
+        display: flex;
+        color: ${props => props.theme.primary};
+        margin-left: -3px;
+        margin-top: -3px;
+      }
     }
     &.outdate {
       color: #c9c8c8;
     }
-    &.date-sun {
-      color: #ecbbbb;
-      border-left: none;
-    }
-    &.date-sat {
-      color: #a0c0da;
-      border-right: none;
-    }
-    &.date-weekday {
-      /* color: green; */
-    }
     &.lastline {
       border-bottom: none;
     }
-    &.today {
-      color: ${props => props.theme.primary};
-      .calendar-date {
-        display: flex;
-        width: 10px;
-        border-bottom: 3px solid ${props => props.theme.primary};
-      }
+    &.rightline {
+      border-right: none;
+    }
+    &:nth-child(42) {
+      border-right: none;
     }
   }
 `;

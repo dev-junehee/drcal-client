@@ -68,7 +68,21 @@ export interface EditAnuualBody {
 export interface CreateDutyBody {
   startDate: Date;
 }
+
 //당직 내용 수정
 export interface EditDutyBody {
   startDate: Date;
+}
+
+//캘린더 조회
+export interface Schedule {
+  category: string;
+  deptName: string;
+  endDate: string;
+  evaluation: string;
+  hospitalName: string;
+  id: number;
+  level: string;
+  name: string;
+  startDate: string;
 }
