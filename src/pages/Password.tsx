@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { PWValidation } from '@/lib/Validation';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
-import axios from 'axios';
-import { UserData } from '@/lib/types';
+import { editPassword, logout } from '@/lib/api';
+import { useNavigate } from 'react-router';
 
 interface EditPasswordBody {
   oldPassword: string;
@@ -13,70 +12,35 @@ interface EditPasswordBody {
 }
 
 const UserInfo = () => {
-  const [user, setUser] = useState<UserData>({});
-
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting, isDirty, isValid },
-    reset,
+    formState: { errors },
   } = useForm<EditPasswordBody>({ mode: 'onChange' });
 
-  const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
-  const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdW5laGVlQGRyY2FsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJElVdUMzLlAzYVJ0RUcwZ2QxNWdaUy5tam9BemdWYjdvbmdYTWdXN3c1WnVVZkVtTlA3QVBTIiwiYXV0aCI6IlVTRVIiLCJpZCI6MTEsImV4cCI6MTY5MTM5NTk1MywidXNlcm5hbWUiOiLquYDspIDtnawiLCJzdGF0dXMiOiJBUFBST1ZFRCJ9.bcjiqSf7OTpTAAEDDuCUDZwzAWVG8JC7GZpmH5HJeCrbnjl0mjIrNuEGl-CNRMg4s8bprmtFSDqy_4XkDH7lOQ';
-
-  // 개인정보 조회
-  const getUserInfo = async () => {
-    await axios
-      .get(`${url}/user/myPage`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(res => {
-        if (res.status === 200) {
-          console.log(res.data.item);
-          setUser(res.data.item);
-        }
-      })
-      .catch(error => console.error('마이페이지 조회 실패', error));
-  };
+  const navigate = useNavigate();
 
   // 비밀번호 수정 핸들러
-  const editUserPassword = ({ oldPassword, newPassword }: EditPasswordBody) => {
+  const editUserPassword = async ({ oldPassword, newPassword }: EditPasswordBody) => {
     console.log('old PW: ', oldPassword);
     console.log('new PW: ', newPassword);
     const body = {
-      new_password: newPassword,
-      old_password: oldPassword,
+      oldPassword,
+      newPassword,
     };
-    axios
-      .post(`${url}/user/updatePassword`, body, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    await editPassword(body)
       .then(res => {
-        if (res.status === 200) {
-          console.log('비밀번호 변경 성공!', res);
-          if (confirm('비밀번호가 성공적으로 변경되었습니다.\n다시 로그인 하시겠습니까?')) {
-            // 재로그인 유도 : 토큰 삭제 + navigate('/login')
-            console.log('재로그인 유도 코드');
-          } else {
-            location.reload();
-          }
+        console.log(res);
+        if (res.success) {
+          alert('비밀번호 변경이 완료되었습니다.\n다시 로그인하여 주시기 바랍니다.');
+          logout();
+          localStorage.removeItem('authToken');
+          navigate('/login');
         }
       })
-      .catch(error => console.log('비밀번호 변경 실패', error));
+      .catch(error => console.error('비밀번호 변경 실패', error));
   };
-
-  useEffect(() => {
-    getUserInfo();
-  }, []);
 
   return (
     <Container>
@@ -101,7 +65,14 @@ const UserInfo = () => {
             type="password"
             maxLength={20}
             placeholder="8자 이상의 새 비밀번호를 입력해 주세요."
-            {...register('newPassword', PWValidation)}
+            {...register('newPassword', {
+              required: '새 비밀번호 입력은 필수 입력입니다.',
+              validate: {
+                value: (pw: string | undefined) => {
+                  if (watch('oldPassword') === pw) return '이전에 사용했던 비밀번호 입니다.';
+                },
+              },
+            })}
           />
         </Label>
         <Label>

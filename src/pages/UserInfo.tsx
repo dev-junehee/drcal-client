@@ -1,97 +1,63 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
-import { UserData } from '@/lib/types';
 import { hospitalDecode } from '@/utils/decode';
-import axios from 'axios';
-import { PWValidation, nameValidation, phoneValidation, hospitalValidation, deptValidation } from '@/lib/Validation';
-import userImg from '/user.png';
+import { LoginBody, UserData } from '@/lib/types';
+import { PWValidation, nameValidation, phoneValidation } from '@/lib/Validation';
+import { UserDataState } from '@/states/stateUserdata';
+import { useRecoilState } from 'recoil';
+import { login, editMyPage } from '@/lib/api';
 
 interface EditProfileBody {
   name: string;
+  password: string;
   deptName: string;
   phone: string;
   image: string;
 }
 
-const UserInfo = () => {
-  const [user, setUser] = useState<UserData>({});
-  // const [profileImg, setProfileImg]: string = useState('');
-  const [passwordChecked, setPasswordChecked]: boolean = useState(false);
-  const [hospitalDeptInfo, setHospitalDeptInfo] = useState([]);
+interface Password {
+  password: string;
+}
 
+interface deptDecode {
+  [key: number]: string;
+}
+
+const UserInfo = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isDirty, isValid },
-    reset,
-  } = useForm<SignUpBody>({ mode: 'onChange' });
+    formState: { errors },
+    watch,
+  } = useForm<EditProfileBody, LoginBody>({ mode: 'onChange' });
 
-  const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
-  const token =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqdW5laGVlQGRyY2FsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJElVdUMzLlAzYVJ0RUcwZ2QxNWdaUy5tam9BemdWYjdvbmdYTWdXN3c1WnVVZkVtTlA3QVBTIiwiYXV0aCI6IlVTRVIiLCJpZCI6MTEsImV4cCI6MTY5MTM5NTk1MywidXNlcm5hbWUiOiLquYDspIDtnawiLCJzdGF0dXMiOiJBUFBST1ZFRCJ9.bcjiqSf7OTpTAAEDDuCUDZwzAWVG8JC7GZpmH5HJeCrbnjl0mjIrNuEGl-CNRMg4s8bprmtFSDqy_4XkDH7lOQ';
+  const [user] = useRecoilState<UserData>(UserDataState);
+  const [passwordChecked, setPasswordChecked] = useState<boolean>(false);
+  const [imgPreview, setImgPreview] = useState('/public/user.png');
+  const userImg = watch('image');
 
-  // 개인정보 조회
-  const getUserInfo = async () => {
-    await axios
-      .get(`${url}/user/myPage`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(res => {
-        if (res.status === 200) {
-          console.log(res.data.item);
-          setUser(res.data.item);
-        }
-      })
-      .catch(error => console.error('마이페이지 조회 실패', error));
-  };
+  useEffect(() => {
+    if (userImg && userImg.length > 0) {
+      const file = userImg[0];
+      setImgPreview(URL.createObjectURL(file));
+    }
+  }, [userImg]);
 
   // 비밀번호 재확인
-  const checkPassword = async (password: string) => {
-    await axios
-      .post(
-        `${url}/user/login`,
-        {
-          email: user.email,
-          password: password.password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      )
+  const checkPassword = async (password: Password) => {
+    const body = {
+      email: user.email,
+      password: password.password,
+    };
+    await login(body)
       .then(res => {
         if (res.status === 200) {
-          console.log('비밀번호 확인 성공', res);
           setPasswordChecked(!passwordChecked);
         }
       })
-      .catch(error => console.log('비밀번호 확인 실패', error));
-  };
-
-  // 병원의 과 확인 (Select Box)
-  const getDeptId = async (deptName: string) => {
-    await axios.get(`${url}/dept/${user.hospital_id}/list`).then(res => {
-      if (res.data.item.deptName === deptName) {
-        console.log(res.data.item);
-        return res.data.item.deptId;
-      }
-    });
-  };
-
-  // 병원 확인 (Select Box)
-  const getHospitalName = async (hospitalId: number) => {
-    await axios.get(`${url}/hospital/list`).then(res => {
-      if (res.data.item.hospitalId === hospitalId) {
-        console.log(res.data.item);
-        return res.data.item.hospitalName;
-      }
-    });
+      .catch(error => console.error('비밀번호 확인 실패', error));
   };
 
   // 개인정보 수정
@@ -99,28 +65,28 @@ const UserInfo = () => {
     name = user.name,
     deptName,
     phone = user.phone,
-    image = user.profile_image_url,
+    image = user.profileImageUrl,
   }: EditProfileBody) => {
-    const deptId = getDeptId(deptName);
-    if (deptId !== undefined) {
-      const body = {
-        name,
-        deptId,
-        phone,
-        image,
-      };
-      console.log('확인하자', body);
-      console.log('이미지 업로드 확인', body.image[0].name);
-      axios
-        .post(`${url}/editUser`, body, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        })
+    const findKeyByValue = (obj: deptDecode, value: string) => {
+      for (const key in obj) {
+        if (obj[key] === value) {
+          return key;
+        }
+      }
+      return null;
+    };
+    const deptId = findKeyByValue(hospitalDecode[user.hospitalId].dept, deptName);
+    const body = {
+      name,
+      deptId,
+      phone,
+      image: FileList.length > 0 ? FileList[0] : null,
+    };
+    if (confirm('개인정보를 수정하시겠습니까?')) {
+      editMyPage(body)
         .then(res => {
-          if (res.status === 200) {
-            console.log('개인정보 수정 성공!', res);
+          if (res.success) {
+            alert('개인정보 수정이 완료되었습니다.');
             location.reload();
           }
         })
@@ -128,19 +94,15 @@ const UserInfo = () => {
     }
   };
 
-  useEffect(() => {
-    getUserInfo();
-  }, []);
-
   // 프로필 사진 업로드 핸들러
-  const uploadProfileImg = () => {
-    const file = imgRef.current?.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setProfileImg(reader.result);
-    };
-  };
+  // const uploadProfileImg = () => {
+  //   const file = imgRef.current?.files[0];
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   reader.onloadend = () => {
+  //     setProfileImg(reader.result);
+  //   };
+  // };
 
   return (
     <>
@@ -170,7 +132,7 @@ const UserInfo = () => {
           </Title>
           <FormWrapper id="user-info" onSubmit={handleSubmit(editUserInfo)}>
             <ProfileImgWrapper>
-              <img src={userImg} alt="프로필 이미지" />
+              <img src={imgPreview} alt="프로필 이미지" />
             </ProfileImgWrapper>
             <Label className="profile">
               <ProfileImgEdit>변경</ProfileImgEdit>
@@ -178,23 +140,28 @@ const UserInfo = () => {
             </Label>
             <Label>
               name
-              <Input type="text" defaultValue={user?.name} {...register('name', nameValidation)} />
+              <Input type="text" defaultValue={user.name} {...register('name', nameValidation)} />
             </Label>
             <Label>
               Hospital
-              <Select
-                defaultValue={hospitalDecode[user?.hospital_id]?.hospital}
-                {...register('hospital', hospitalValidation)}
-              >
-                <option value={hospitalDecode[user?.hospital_id]?.hospital}>
-                  {hospitalDecode[user?.hospital_id]?.hospital}
+              <Select defaultValue={hospitalDecode[user.hospitalId].hospital}>
+                <option value={hospitalDecode[user.hospitalId].hospital}>
+                  {hospitalDecode[user.hospitalId].hospital}
                 </option>
               </Select>
             </Label>
             <Label>
               Part
-              <Select form="user-info" {...register('deptId', deptValidation)}>
-                {hospitalDecode[user?.hospital_id]?.dept.map(v => <option value={v}>{v}</option>)}
+              <Select
+                form="user-info"
+                defaultValue={hospitalDecode[user.hospitalId].dept[user.deptId]}
+                {...register('deptName')}
+              >
+                {Object.values(hospitalDecode[user.hospitalId].dept).map((v, i) => (
+                  <option key={i} value={v}>
+                    {v}
+                  </option>
+                ))}
               </Select>
             </Label>
             <Label>
@@ -341,6 +308,7 @@ const ProfileImgWrapper = styled.div`
   width: 160px;
   height: 160px;
   border-radius: 50%;
+  overflow: hidden;
   img {
     width: 100%;
     height: 100%;

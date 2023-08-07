@@ -165,7 +165,7 @@ export const createAnnual = async (body: CreateAnnualBody) => {
 };
 
 // 연차 내용 수정
-export const editAnnual = async (body: EditAnuualBody, scheduleId: number) => {
+export const editAnnual = async (body: EditAnnualBody, scheduleId: number) => {
   try {
     const res = await authInstance.post(`/schedule/annual/${scheduleId}/update`, body);
     return res.data;
