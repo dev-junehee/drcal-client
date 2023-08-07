@@ -5,7 +5,7 @@ import {
   EditMyPageBody,
   editPasswordBody,
   CreateAnnualBody,
-  EditAnuualBody,
+  EditAnnualBody,
   CreateDutyBody,
   EditDutyBody,
 } from '@/lib/types';

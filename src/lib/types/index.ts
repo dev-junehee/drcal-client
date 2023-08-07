@@ -3,21 +3,21 @@
 // 사용자 데이터
 export interface UserData {
   id: number;
-  emp_no: number;
+  empNo: number;
   name: string;
   email: string;
   phone: string;
-  hospital_id: number;
-  dept_id: number;
+  hospitalId: number;
+  deptId: number;
   level: string;
   auth: string;
   status: string;
   annual: number;
   duty: number;
-  profile_image_url: string;
+  profileImageUrl: string;
   hiredate: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // 로그인
@@ -32,20 +32,20 @@ export interface SignUpBody {
   password: string;
   phone: string;
   name: string;
-  hospital_id: number;
-  dept_id: number;
+  hospitalId: number;
+  deptId: number;
 }
 
 //비밀번호 변경
 export interface editPasswordBody {
-  new_password: string;
-  old_password: string;
+  newPassword: string;
+  oldPassword: string;
 }
 
 //마이페이지 수정
 export interface EditMyPageBody {
   name: string;
-  dept_id: number;
+  deptId: number;
   phone: string;
   image: string;
 }
@@ -58,7 +58,7 @@ export interface CreateAnnualBody {
 }
 
 //연차 내용 수정
-export interface EditAnuualBody {
+export interface EditAnnualBody {
   startDate: Date;
   endDate: Date;
   reason: string;
