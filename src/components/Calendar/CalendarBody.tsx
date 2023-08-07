@@ -36,7 +36,6 @@ const CalendarBody = ({
     };
 
     openModal(modalData);
-    console.log('당직클릭', date.format('YYYY-MM-DD'));
   };
 
   const handleClickAnnual = (date: dayjs.Dayjs) => {
@@ -49,7 +48,6 @@ const CalendarBody = ({
     };
 
     openModal(modalData);
-    console.log('휴가클릭', date.format('YYYY-MM-DD'));
   };
 
   //달력 7일 6주 고정

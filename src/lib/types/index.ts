@@ -86,3 +86,24 @@ export interface Schedule {
   name: string;
   startDate: string;
 }
+
+//날짜별 휴가 조회
+export interface AnnualData {
+  deptName: string;
+  id: number;
+  level: string;
+  phone: string;
+  username: string;
+}
+
+//날짜별 당직 조회
+export interface DutyData {
+  deptName: string;
+  email: string;
+  id: number;
+  level: string;
+  phone: string;
+  profileImageUrl: string;
+  userId: number;
+  username: string;
+}

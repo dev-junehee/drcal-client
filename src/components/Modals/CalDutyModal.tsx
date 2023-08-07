@@ -1,27 +1,53 @@
+import { useEffect, useState } from 'react';
+import { getDuty } from '@/lib/api';
 import { styled } from 'styled-components';
+import { getLevel, getPhone } from '@/utils/decode';
+import { DutyData } from '@/lib/types';
 
-export const CalDutylModal = ({ date }) => {
+interface ProfileProps {
+  $imgurl: null | string;
+}
+
+const DutyDataInitial = {
+  deptName: '',
+  email: '',
+  id: 0,
+  level: '',
+  phone: '',
+  profileImageUrl: '',
+  userId: 0,
+  username: '',
+};
+
+export const CalDutylModal = ({ date }: { date: string }) => {
+  const [duty, setDuty] = useState<DutyData>(DutyDataInitial);
+
+  useEffect(() => {
+    (async () => {
+      const data = await getDuty(date);
+      setDuty(data.item);
+    })();
+  }, []);
+
   return (
     <Container>
-      <DateWrap> {date}</DateWrap>
+      <DateWrap>{date}</DateWrap>
       <UserWrap>
-        <UserImg />
+        {duty.profileImageUrl === null ? <UserImg $imgurl="/user.png" /> : <UserImg $imgurl={duty.profileImageUrl} />}
         <UserInfo>
           <NameCard>
-            <div className="name">김땡땡</div>
-            <div className="part">신경외과 레지던트</div>
+            <div className="name">{duty.username}</div>
+            <div className="part">
+              {duty.deptName} {getLevel(duty.level)}
+            </div>
           </NameCard>
           <DataCard>
-            <div className="dataTitle">사번</div>
-            <div className="dataText">1234123</div>
-          </DataCard>
-          <DataCard>
             <div className="dataTitle">전화번호</div>
-            <div className="dataText">010-9191-1919</div>
+            <div className="dataText">{getPhone(duty.phone)}</div>
           </DataCard>
           <DataCard>
             <div className="dataTitle">이메일</div>
-            <div className="dataText">eefef@edfef.com</div>
+            <div className="dataText">{duty.email}</div>
           </DataCard>
         </UserInfo>
       </UserWrap>
@@ -49,10 +75,10 @@ const UserWrap = styled.div`
   align-items: center;
   justify-content: center;
 `;
-const UserImg = styled.div`
+const UserImg = styled.div<ProfileProps>`
   width: 140px;
   height: 140px;
-  background-image: url(/user.png);
+  background-image: url(${props => props.$imgurl});
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
