@@ -100,7 +100,7 @@ const SideBar = () => {
       <Wrapper>
         <UserInfo>
           <span className="user-name">{User.name}</span>
-          <span className="user-dept">{dname[User.dept_id]}</span>
+          <span className="user-dept">{dname[User.deptId]}</span>
           <span className="user-level">{getLevel(User.level)}</span>
         </UserInfo>
         <UserSchedule>
@@ -109,14 +109,14 @@ const SideBar = () => {
             <ProgressBar>
               <Progress className="annual" $percent={percentData(User.annual, 15)}></Progress>
             </ProgressBar>
-            <span>{User.annual}일</span>
+            <span className="label-date">{User.annual}일</span>
           </DataRow>
           <DataRow>
             <span className="label">이번달 당직</span>
             <ProgressBar>
               <Progress className="duty" $percent={percentData(User.duty, 3)}></Progress>
             </ProgressBar>
-            <span>{User.duty}일</span>
+            <span className="label-date">{User.duty}일</span>
           </DataRow>
         </UserSchedule>
         <AnnualBtn />
@@ -237,13 +237,21 @@ const DataRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+  }
   .label {
     width: 80px;
+  }
+  .label-date {
+    width: 40px;
+    text-align: right;
   }
 `;
 
 const ProgressBar = styled.div`
-  width: 80px;
+  width: 90px;
   height: 5px;
   border-radius: 30px;
   background-color: ${props => props.theme.middleGray};
