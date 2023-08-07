@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
+import { getHospitalList, getDeptList, signUp } from '@/lib/api';
 import {
   emailValidation,
   PWValidation,
@@ -11,7 +12,6 @@ import {
 } from '@/lib/Validation';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
-import axios from 'axios';
 
 interface SignUpBody {
   email: string;
@@ -38,15 +38,14 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
-  const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
-
   // 등록된 병원 리스트 확인 (Select Box)
-  const getHospitalList = () => {
-    axios.get(`${url}/hospital/list`).then(res => {
-      if (res.status === 200) {
-        console.log('병원 리스트 호출 성공', res.data.item);
-        setHospitalInfo(res.data.item);
-        const hospitalNames = res.data.item.map((v: { hospitalName: string }) => v.hospitalName);
+  const getHospital = async () => {
+    await getHospitalList().then(res => {
+      console.log(res);
+      if (res.success) {
+        console.log('병원 리스트 호출 성공', res.item);
+        setHospitalInfo(res.item);
+        const hospitalNames = res.item.map((v: { hospitalName: string }) => v.hospitalName);
         setHospitalList(hospitalNames);
       }
     });
@@ -59,16 +58,13 @@ const SignUp = () => {
     const hospitalId: number = hospitalList.indexOf(hospitalName) + 1;
     console.log('병원ID : ', hospitalId);
     if (hospitalId) {
-      await axios
-        .get(`${url}/dept/${hospitalId}/list`)
+      await getDeptList(hospitalId)
         .then(res => {
-          if (res.status === 200) {
-            setHospitalDeptInfo(Object.values(res.data.item));
+          if (res.success) {
+            setHospitalDeptInfo(Object.values(res.item));
             console.log('과 정보', hospitalDeptInfo);
             const deptList = Object.values(
-              res.data.item
-                .map((v: { deptName: string }) => v.deptName)
-                .sort((a: number, b: number) => (a < b ? -1 : 1)),
+              res.item.map((v: { deptName: string }) => v.deptName).sort((a: number, b: number) => (a < b ? -1 : 1)),
             );
             setHospitalDeptList(deptList);
           }
@@ -78,27 +74,27 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    getHospitalList();
+    getHospital();
   }, []);
 
   // 회원가입 핸들러
   const userSignUp = async ({ email, password, name, hospital, dept, phone }: SignUpBody) => {
-    const hospital_id = hospitalInfo.find(v => v.hospitalName === hospital).hospitalId;
-    const dept_id = hospitalDeptInfo.find(v => v.deptName === dept).deptId;
-    console.log(hospital_id, dept_id);
+    const hospitalId = hospitalInfo.find(v => v.hospitalName === hospital).hospitalId;
+    const deptId = hospitalDeptInfo.find(v => v.deptName === dept).deptId;
+    console.log(hospitalId, deptId);
     const body = {
       email,
       password,
       name,
-      hospital_id,
-      dept_id,
+      hospitalId,
+      deptId,
       phone,
     };
     console.log(body);
-    await axios
-      .post(`${url}/user/register`, body)
+    await signUp(body)
       .then(res => {
-        if (res.status === 200) {
+        console.log(res);
+        if (res.success) {
           console.log('회원가입 body', body);
           console.log('회원가입 성공', res);
           if (confirm('회원가입 성공!\n로그인 페이지로 이동하시겠습니까?')) {
