@@ -57,3 +57,15 @@ export const hospitalDecode: hospitalDecode = {
     ],
   },
 };
+
+export const getLevel = (level: string) => {
+  if (level == 'PK') {
+    return '본과실습생';
+  } else if (level == 'INTERN') {
+    return '인턴';
+  } else if (level == 'RESIDENT') {
+    return '전공의';
+  } else if (level == 'FELLOW') {
+    return '전문의';
+  }
+};

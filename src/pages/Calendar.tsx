@@ -1,4 +1,3 @@
-import CalendarHeader from '@/components/Calendar/CalendarHeader';
 import { styled } from 'styled-components';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
@@ -7,18 +6,30 @@ import CalendarList from '@/components/Calendar/CalendarList';
 import { useRecoilValue } from 'recoil';
 import { LoginState } from '@/states/stateLogin';
 import { useNavigate } from 'react-router';
+import { getSchedule } from '@/lib/api';
+import { Schedule } from '@/lib/types';
 
 const Calendar = () => {
+  const [scheduleData, setScheduleData] = useState<Schedule[]>();
   const [currentMonth, setCurrentMonth] = useState(dayjs());
   const [toggleButton, settoggleButton] = useState(true);
   const [dutyActive, setdutyActive] = useState(false);
   const [annualActive, setannualActive] = useState(false);
   const isLoggedIn = useRecoilValue(LoginState);
   const navigate = useNavigate();
+  const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+
+  const fetchData = async () => {
+    const data = await getSchedule();
+    setScheduleData(data.item);
+  };
 
   useEffect(() => {
     !isLoggedIn && navigate('/login');
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (isLoggedIn) {
+      fetchData();
+    }
   }, []);
 
   const prevMonth = () => {
@@ -48,31 +59,81 @@ const Calendar = () => {
   return (
     <Container>
       <ToggleButton>
-        <Button className={toggleButton ? 'calendar-button active' : 'calendar-button'} onClick={handleClickToggle}>
+        <Button
+          className={toggleButton ? 'calendar-button active' : 'calendar-button'}
+          onClick={handleClickToggle}
+          disabled={!scheduleData}
+        >
           달력
         </Button>
-        <Button className={toggleButton ? 'list-button' : 'list-button active'} onClick={handleClickToggle}>
+        <Button
+          className={toggleButton ? 'list-button' : 'list-button active'}
+          onClick={handleClickToggle}
+          disabled={!scheduleData}
+        >
           목록
         </Button>
       </ToggleButton>
       {toggleButton ? (
         <>
-          <button className="today-button" onClick={handleClickToday}>
+          <button className="today-button" onClick={handleClickToday} disabled={!scheduleData}>
             오늘
           </button>
           <FilterButtons>
-            <button className={dutyActive ? 'duty-button active' : 'duty-button'} onClick={handleClickDuty}>
+            <button
+              className={dutyActive ? 'duty-button active' : 'duty-button'}
+              onClick={handleClickDuty}
+              disabled={!scheduleData}
+            >
               당직
             </button>
-            <button className={annualActive ? 'annual-button active' : 'annual-button'} onClick={handleClickAnnual}>
+            <button
+              className={annualActive ? 'annual-button active' : 'annual-button'}
+              onClick={handleClickAnnual}
+              disabled={!scheduleData}
+            >
               휴가
             </button>
           </FilterButtons>
-          <CalendarHeader prevMonth={prevMonth} nextMonth={nextMonth} currentMonth={currentMonth} />
-          <CalendarBody currentMonth={currentMonth} dutyactive={dutyActive} annualactive={annualActive} />
+          <Header>
+            <CalendarButtons>
+              <button className="prev-button" onClick={prevMonth} disabled={!scheduleData}>
+                &lt;
+              </button>
+              <button className="next-button" onClick={nextMonth} disabled={!scheduleData}>
+                &gt;
+              </button>
+              <MonthWrapper>{currentMonth.format('YYYY년 M월')}</MonthWrapper>
+            </CalendarButtons>
+          </Header>
+
+          {scheduleData ? (
+            <>
+              <Weeks>
+                {weekDays.map(day => (
+                  <Week className="weeks" key={day}>
+                    <div>{day}</div>
+                  </Week>
+                ))}
+              </Weeks>
+              <CalendarBody
+                scheduleData={scheduleData}
+                currentMonth={currentMonth}
+                dutyactive={dutyActive}
+                annualactive={annualActive}
+              />
+            </>
+          ) : (
+            <>
+              <Weeks></Weeks>
+              <Loading></Loading>
+            </>
+          )}
         </>
+      ) : scheduleData ? (
+        <CalendarList scheduleData={scheduleData} />
       ) : (
-        <CalendarList />
+        ''
       )}
     </Container>
   );
@@ -99,6 +160,18 @@ const Container = styled.div`
     background-color: ${props => props.theme.white};
     cursor: pointer;
   }
+`;
+
+const Loading = styled.div`
+  width: 100%;
+  height: calc(100% - 90px);
+  border-right: 1px solid ${props => props.theme.gray};
+  border-left: 1px solid ${props => props.theme.gray};
+  border-bottom: 1px solid ${props => props.theme.gray};
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  background-color: ${props => props.theme.white};
+  box-sizing: border-box;
 `;
 
 const ToggleButton = styled.div`
@@ -152,4 +225,81 @@ const FilterButtons = styled.div`
       color: ${props => props.theme.white};
     }
   }
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 30px;
+  .prev-button,
+  .next-button,
+  .calendar-button,
+  .list-button {
+    height: 30px;
+    border: none;
+    outline: none;
+    border: 1px solid ${props => props.theme.gray};
+    background-color: ${props => props.theme.white};
+    color: ${props => props.theme.gray};
+    cursor: pointer;
+  }
+  .calendar-button,
+  .prev-button {
+    width: 45px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-right: none;
+  }
+  .list-button,
+  .next-button {
+    width: 45px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+`;
+
+const CalendarButtons = styled.div`
+  display: flex;
+`;
+
+const MonthWrapper = styled.div`
+  margin-left: 70px;
+  font-size: 24px;
+  font-weight: bold;
+  color: ${props => props.theme.primary};
+`;
+
+const Weeks = styled.div`
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-left: 1px solid ${props => props.theme.gray};
+  border-top: 1px solid ${props => props.theme.gray};
+  border-right: 1px solid ${props => props.theme.gray};
+  margin-top: 20px;
+  background-color: ${props => props.theme.white};
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-right: 1px solid ${props => props.theme.gray};
+    color: ${props => props.theme.gray};
+    font-weight: 500;
+    &:last-child {
+      padding-right: 1px;
+      border-right: none;
+    }
+  }
+`;
+
+const Week = styled.div`
+  display: flex;
+  justify-content: center;
+  width: calc(100% / 7);
 `;

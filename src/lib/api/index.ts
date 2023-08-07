@@ -91,7 +91,11 @@ export const editPassword = async (body: editPasswordBody) => {
 // 메인 캘린더 조회
 export const getSchedule = async () => {
   try {
-    const res = await authInstance.get('/schedule/');
+    const res = await instance.get('/schedule/', {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('캘린더 조회 실패', error);
