@@ -36,7 +36,6 @@ export const ModalContainer = styled.div`
 `;
 export const ModalBody = styled.div`
   box-sizing: border-box;
-  min-height: 500px;
   width: 550px;
   color: ${props => props.theme.black};
   background-color: ${props => props.theme.white};
@@ -51,7 +50,6 @@ export const ModalContent = styled.div`
   align-items: center;
   height: 100%;
   padding: 20px 0 60px 0;
-  gap: 32px;
 `;
 
 export const ModalTitle = styled.div`
