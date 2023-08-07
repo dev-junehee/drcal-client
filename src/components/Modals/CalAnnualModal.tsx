@@ -1,9 +1,22 @@
+import { useEffect, useState } from 'react';
+import { getAnnual } from '@/lib/api';
 import { styled } from 'styled-components';
+import { getLevel, getPhone } from '@/utils/decode';
+import { AnnualData } from '@/lib/types';
 
-export const CalAnnualModal = ({ date }) => {
+export const CalAnnualModal = ({ date }: { date: string }) => {
+  const [annual, setAnnual] = useState<AnnualData[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const data = await getAnnual(date);
+      setAnnual(data.item);
+    })();
+  }, []);
+
   return (
     <Container>
-      <DateWrap> {date}</DateWrap>
+      <DateWrap>{date}</DateWrap>
       <TableContainer>
         <DataWrap>
           <div>No.</div>
@@ -12,13 +25,15 @@ export const CalAnnualModal = ({ date }) => {
           <div>직급</div>
           <div>연락처</div>
         </DataWrap>
-        <DataWrap>
-          <div>1</div>
-          <div>나영석</div>
-          <div>소아과</div>
-          <div>인턴</div>
-          <div>010-92982-1828</div>
-        </DataWrap>
+        {annual.map((item, index) => (
+          <DataWrap key={index}>
+            <div>{index + 1}</div>
+            <div>{item.username}</div>
+            <div>{item.deptName}</div>
+            <div>{getLevel(item.level)}</div>
+            <div>{getPhone(item.phone)}</div>
+          </DataWrap>
+        ))}
       </TableContainer>
     </Container>
   );

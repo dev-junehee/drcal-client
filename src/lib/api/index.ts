@@ -119,7 +119,11 @@ export const getSchedule = async () => {
 // 날짜별 휴가 인원 조회
 export const getAnnual = async (date: string) => {
   try {
-    const res = await authInstance.get(`/schedule/date?chooseDate=${date}&category=ANNUAL`);
+    const res = await instance.get(`/schedule/date?chooseDate=${date}&category=ANNUAL`, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('휴가 인원 조회 실패', error);
@@ -129,7 +133,11 @@ export const getAnnual = async (date: string) => {
 // 날짜별 당직 인원 조회
 export const getDuty = async (date: string) => {
   try {
-    const res = await authInstance.get(`/schedule/date?chooseDate=${date}&category=DUTY`);
+    const res = await instance.get(`/schedule/date?chooseDate=${date}&category=DUTY`, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('당직 인원 조회 실패', error);
