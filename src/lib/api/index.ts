@@ -170,9 +170,12 @@ export const editAnnual = async (body: EditAnnualBody, scheduleId: number) => {
 };
 
 // 연차 신청 취소
-export const cancelAnnual = async (scheduleId: number) => {
+interface cancelAnnualBody {
+  id: number;
+}
+export const cancelAnnual = async (scheduleId: number, body: cancelAnnualBody) => {
   try {
-    const res = await instance.post(`/schedule/annual/delete?id=${scheduleId}`, {
+    const res = await instance.post(`/schedule/annual/delete?id=${scheduleId}`, body, {
       headers: {
         Authorization: `${localStorage.getItem('authToken')}`,
       },
@@ -186,7 +189,11 @@ export const cancelAnnual = async (scheduleId: number) => {
 // 당직 등록 (사용 여부 체크!)
 export const createDuty = async (body: CreateDutyBody) => {
   try {
-    const res = await instance.post('/schedule/create/duty', body);
+    const res = await instance.post('/schedule/create/duty', body, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('당직 등록 실패', error);
