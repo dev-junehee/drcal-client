@@ -4,6 +4,8 @@ import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
 import { editPassword, logout } from '@/lib/api';
 import { useNavigate } from 'react-router';
+import { useSetRecoilState } from 'recoil';
+import { LoginState } from '@/states/stateLogin';
 
 interface EditPasswordBody {
   oldPassword: string;
@@ -20,22 +22,21 @@ const UserInfo = () => {
   } = useForm<EditPasswordBody>({ mode: 'onChange' });
 
   const navigate = useNavigate();
+  const setIsLoggedIn = useSetRecoilState(LoginState);
 
   // 비밀번호 수정 핸들러
   const editUserPassword = async ({ oldPassword, newPassword }: EditPasswordBody) => {
-    console.log('old PW: ', oldPassword);
-    console.log('new PW: ', newPassword);
     const body = {
       oldPassword,
       newPassword,
     };
     await editPassword(body)
       .then(res => {
-        console.log(res);
         if (res.success) {
           alert('비밀번호 변경이 완료되었습니다.\n다시 로그인하여 주시기 바랍니다.');
           logout();
           localStorage.removeItem('authToken');
+          setIsLoggedIn(false);
           navigate('/login');
         }
       })
