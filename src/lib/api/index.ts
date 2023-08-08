@@ -120,11 +120,7 @@ export const getAnnual = async (date: string) => {
 // 날짜별 당직 인원 조회
 export const getDuty = async (date: string) => {
   try {
-    const res = await instance.get(`/schedule/date?chooseDate=${date}&category=DUTY`, {
-      headers: {
-        Authorization: `${localStorage.getItem('authToken')}`,
-      },
-    });
+    const res = await instance.get(`/schedule/date?chooseDate=${date}&category=DUTY`);
     return res.data;
   } catch (error) {
     console.log('당직 인원 조회 실패', error);
