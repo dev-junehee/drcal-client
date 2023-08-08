@@ -218,7 +218,6 @@ export const getHospitalList = async () => {
     const res = await instance.get('/hospital/list');
     return res.data;
   } catch (error) {
-    throw error;
     console.log('병원 정보 리스트 조회 실패', error);
   }
 };
