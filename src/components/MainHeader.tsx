@@ -6,7 +6,7 @@ import { UserDataState } from '@/states/stateUserdata';
 
 const MainHeader = () => {
   const UserData = useRecoilValue(UserDataState);
-  const hospitalNum = UserData.hospital_id;
+  const hospitalNum = UserData.hospitalId;
 
   return (
     <Container>
