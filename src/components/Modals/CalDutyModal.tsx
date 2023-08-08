@@ -62,6 +62,7 @@ const Container = styled.div`
   justify-content: center;
   gap: 32px;
   width: 100%;
+  margin-bottom: 40px;
 `;
 const DateWrap = styled.div`
   color: ${props => props.theme.primary};

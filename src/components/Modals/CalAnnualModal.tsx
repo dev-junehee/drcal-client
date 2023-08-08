@@ -40,11 +40,13 @@ export const CalAnnualModal = ({ date }: { date: string }) => {
 };
 
 const Container = styled.div`
+  height: 280px;
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: 40px;
 `;
 
 const DateWrap = styled.div`
