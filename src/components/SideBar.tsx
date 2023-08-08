@@ -7,7 +7,7 @@ import { FaRegPaperPlane } from 'react-icons/fa';
 import AnnualBtn from '@/components/Buttons/AnnualBtn';
 import DutyBtn from '@/components/Buttons/DutyBtn';
 import { dname, getLevel } from '@/utils/decode';
-import { logout, getMyPage2 } from '@/lib/api';
+import { logout, getMyPage } from '@/lib/api';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { LoginState, UserState } from '@/states/stateLogin';
 import { UserDataState } from '@/states/stateUserdata';
@@ -37,7 +37,7 @@ const SideBar = () => {
 
   useEffect(() => {
     (async () => {
-      const data = await getMyPage2();
+      const data = await getMyPage();
       setUser(data.item);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
