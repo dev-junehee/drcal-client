@@ -1,3 +1,4 @@
+
 import { RequestModal } from '@/components/Modals/RequestModal';
 import CheckModal from '@/components/Modals/checkModal';
 import { useModal } from '@/hooks/useModal';
@@ -7,18 +8,21 @@ import { UserDataState } from '@/states/stateUserdata';
 import { getCategory, getEvaluation } from '@/utils/decode';
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+
 import { styled } from 'styled-components';
 
 const RequestList = () => {
   const userDataState = useRecoilValue(UserDataState);
+
   const setScheduleId = useSetRecoilState(scheduleIdState);
   const [requestLists, setRequestLists] = useState({});
   const { openModal } = useModal();
 
-  const userID = userDataState.id;
+
 
   useEffect(() => {
     const getList = async () => {
+
       const res = await getRequest(userID);
       setRequestLists(res.item);
     };
@@ -55,6 +59,7 @@ const RequestList = () => {
     console.log(id);
   };
 
+
   return (
     <Container>
       <Header>
@@ -65,7 +70,9 @@ const RequestList = () => {
         </Select>
       </Header>
       <TableContainer>
+
         <DataWrap className="title">
+
           <div className="box1">No.</div>
           <div className="box2">유형</div>
           <div className="box3">신청날짜</div>
@@ -104,6 +111,7 @@ const RequestList = () => {
               </DataWrap>
             ))}
         </ListWrap>
+
       </TableContainer>
     </Container>
   );
@@ -136,6 +144,7 @@ const ListWrap = styled.div`
   flex-direction: column;
   gap: 16px;
   overflow: scroll;
+
 `;
 const DataWrap = styled.div`
   padding: 16px 0;
@@ -143,6 +152,7 @@ const DataWrap = styled.div`
   display: flex;
   justify-content: space-between;
   &.title {
+
     border-bottom: 1px solid ${props => props.theme.gray};
     font-weight: 700;
   }
@@ -178,6 +188,7 @@ const DataWrap = styled.div`
       cursor: pointer;
       text-decoration: underline;
     }
+
   }
 `;
 const BtnBox = styled.div`
@@ -185,6 +196,7 @@ const BtnBox = styled.div`
   justify-content: center;
   align-items: center;
   width: 70px;
+
   height: 30px;
   border-radius: 20px;
   background-color: ${props => props.theme.primary};

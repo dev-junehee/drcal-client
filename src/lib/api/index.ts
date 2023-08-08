@@ -135,6 +135,22 @@ export const getRequest = async (userId: number) => {
         Authorization: `${localStorage.getItem('authToken')}`,
       },
     });
+<<<<<<< HEAD
+=======
+    return res.data;
+  } catch (error) {
+    console.log('요청 내역 확인 실패', error);
+  }
+};
+
+export const getRequest2 = async (userId: number) => {
+  try {
+    const res = await instance.get(`/schedule/${userId}`, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
+>>>>>>> a46dad6 (:sparkles: Feat: 요청내역 연결)
     return res.data;
   } catch (error) {
     console.log('요청 내역 확인 실패', error);
