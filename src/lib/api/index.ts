@@ -200,10 +200,15 @@ export const createDuty = async (body: CreateDutyBody) => {
 // 당직 내용 수정
 export const editDuty = async (body: EditDutyBody, scheduleId: number) => {
   try {
-    const res = await instance.post(`/schedule/duty/${scheduleId}/update`, body);
+    const res = await instance.post(`/schedule/duty/${scheduleId}/update`, body, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('당직 내용 수정 실패', error);
+    throw error;
   }
 };
 
@@ -213,6 +218,7 @@ export const getHospitalList = async () => {
     const res = await instance.get('/hospital/list');
     return res.data;
   } catch (error) {
+    throw error;
     console.log('병원 정보 리스트 조회 실패', error);
   }
 };
