@@ -28,18 +28,10 @@ const nameValidation = {
 
 const hospitalValidation = {
   required: '재직 병원은 필수 입력입니다.',
-  // pattern: {
-  //   value: /^[가-힣]*$/,
-  //   message: '영문과 숫자만 가능합니다.',
-  // },
 };
 
 const deptValidation = {
   required: '근무 파트는 필수 입력입니다.',
-  // pattern: {
-  //   value: /^[가-힣]*$/,
-  //   message: '영문과 숫자만 가능합니다.',
-  // },
 };
 
 const phoneValidation = {

@@ -1,104 +1,108 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
-// import { data } from '@/MockData/User';
-import { UserData } from '@/lib/types';
 import { hospitalDecode } from '@/utils/decode';
-import axios from 'axios';
-import { PWValidation } from '@/lib/Validation';
+import { LoginBody, UserData } from '@/lib/types';
+import { PWValidation, nameValidation, phoneValidation } from '@/lib/Validation';
+import { UserDataState } from '@/states/stateUserdata';
+import { useRecoilState } from 'recoil';
+import { login, editMyPage } from '@/lib/api';
 
 interface EditProfileBody {
   name: string;
-  deptId: number;
+  password: string;
+  deptName: string;
   phone: string;
-  profileImageUrl: string;
+  image: string;
+}
+
+interface Password {
+  password: string;
+}
+
+interface deptDecode {
+  [key: number]: string;
 }
 
 const UserInfo = () => {
-  const [user, setUser] = useState<UserData>();
-  const [profileImg, setProfileImg]: string | null = useState('/user.png');
-  const [passwordChecked, setPasswordChecked]: boolean = useState(false);
-  const imgRef = useRef();
-
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isDirty, isValid },
-    reset,
-  } = useForm<SignUpBody>({ mode: 'onChange' });
+    formState: { errors },
+    watch,
+  } = useForm<EditProfileBody, LoginBody>({ mode: 'onChange' });
 
-  const url = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
+  const [user] = useRecoilState<UserData>(UserDataState);
+  const [passwordChecked, setPasswordChecked] = useState<boolean>(false);
+  const [imgPreview, setImgPreview] = useState('/public/user.png');
+  const userImg = watch('image');
 
-  // 비밀번호 확인
-  const checkPassword = (password: string) => {
-    axios
-      .post(
-        `${url}/user/login`,
-        {
-          email: 'chacha@drcal.com',
-          password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      )
+  useEffect(() => {
+    if (userImg && userImg.length > 0) {
+      const file = userImg[0];
+      setImgPreview(URL.createObjectURL(file));
+    }
+  }, [userImg]);
+
+  // 비밀번호 재확인
+  const checkPassword = async (password: Password) => {
+    const body = {
+      email: user.email,
+      password: password.password,
+    };
+    await login(body)
       .then(res => {
         if (res.status === 200) {
-          console.log('비밀번호 확인 성공', res);
           setPasswordChecked(!passwordChecked);
         }
       })
-      .catch(error => console.log('비밀번호 확인 실패', error));
-  };
-
-  // 개인정보 조회
-  const getUserInfo = async () => {
-    await axios
-      .get(`${url}/user/myPage`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      })
-      .then(res => {
-        if (res.status === 200) {
-          console.log(res.data.item);
-          setUser(res.data.item);
-        }
-      })
-      .catch(error => console.error('마이페이지 조회 실패', error));
+      .catch(error => console.error('비밀번호 확인 실패', error));
   };
 
   // 개인정보 수정
-  const editUserInfo = ({ name, deptId, phone, profileImageUrl }: EditProfileBody) => {
+  const editUserInfo = ({
+    name = user.name,
+    deptName,
+    phone = user.phone,
+    image = user.profileImageUrl,
+  }: EditProfileBody) => {
+    const findKeyByValue = (obj: deptDecode, value: string) => {
+      for (const key in obj) {
+        if (obj[key] === value) {
+          return key;
+        }
+      }
+      return null;
+    };
+    const deptId = findKeyByValue(hospitalDecode[user.hospitalId].dept, deptName);
     const body = {
       name,
       deptId,
       phone,
-      profileImageUrl,
+      image: FileList.length > 0 ? FileList[0] : null,
     };
-    axios.post(`${url}/editUser`, body).then(res => {
-      if (res.status === 200) {
-        console.log('개인정보 수정 성공!', res);
-      }
-    });
+    if (confirm('개인정보를 수정하시겠습니까?')) {
+      editMyPage(body)
+        .then(res => {
+          if (res.success) {
+            alert('개인정보 수정이 완료되었습니다.');
+            location.reload();
+          }
+        })
+        .catch(error => console.log('개인정보 수정 실패', error));
+    }
   };
-
-  useEffect(() => {
-    getUserInfo();
-  }, []);
 
   // 프로필 사진 업로드 핸들러
-  const uploadProfileImg = () => {
-    const file = imgRef.current?.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setProfileImg(reader.result);
-    };
-  };
+  // const uploadProfileImg = () => {
+  //   const file = imgRef.current?.files[0];
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   reader.onloadend = () => {
+  //     setProfileImg(reader.result);
+  //   };
+  // };
 
   return (
     <>
@@ -126,38 +130,46 @@ const UserInfo = () => {
           <Title>
             <h2>개인정보 수정</h2>
           </Title>
-          <FormWrapper id="user-info">
+          <FormWrapper id="user-info" onSubmit={handleSubmit(editUserInfo)}>
+            <ProfileImgWrapper>
+              <img src={imgPreview} alt="프로필 이미지" />
+            </ProfileImgWrapper>
             <Label className="profile">
-              <ProfileImgWrapper>
-                <img
-                  src={profileImg ? profileImg : '/images/user.png'}
-                  alt="프로필 이미지"
-                  onClick={uploadProfileImg}
-                />
-              </ProfileImgWrapper>
               <ProfileImgEdit>변경</ProfileImgEdit>
-              <Input type="file" accept="image/*" className="profile-img" />
+              <Input type="file" accept="image/*" className="profile-img" {...register('image')} />
             </Label>
             <Label>
               name
-              <Input type="text" defaultValue={user?.name} />
+              <Input type="text" defaultValue={user.name} {...register('name', nameValidation)} />
             </Label>
             <Label>
               Hospital
-              <Select></Select>
+              <Select defaultValue={hospitalDecode[user.hospitalId].hospital}>
+                <option value={hospitalDecode[user.hospitalId].hospital}>
+                  {hospitalDecode[user.hospitalId].hospital}
+                </option>
+              </Select>
             </Label>
             <Label>
               Part
-              <Select form="user-info">
-                {hospitalDecode[user?.hospital_id]?.dept.map(v => <option value={v}>{v}</option>)}
+              <Select
+                form="user-info"
+                defaultValue={hospitalDecode[user.hospitalId].dept[user.deptId]}
+                {...register('deptName')}
+              >
+                {Object.values(hospitalDecode[user.hospitalId].dept).map((v, i) => (
+                  <option key={i} value={v}>
+                    {v}
+                  </option>
+                ))}
               </Select>
             </Label>
             <Label>
               Phone Number
-              <Input type="text" defaultValue={user?.phone} />
+              <Input type="text" defaultValue={user?.phone} {...register('phone', phoneValidation)} />
             </Label>
             <EditBtnWrapper>
-              <Btn content="수정하기" onSubmit={editUserInfo} />
+              <Btn content="수정하기" />
             </EditBtnWrapper>
           </FormWrapper>
         </UserInfoContainer>
@@ -248,7 +260,7 @@ const FormWrapper = styled.form`
 
 const Label = styled.label`
   width: 320px;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   font-family: 'ABeeZee', sans-serif;
   font-size: 0.8rem;
   &.profile {
@@ -296,6 +308,7 @@ const ProfileImgWrapper = styled.div`
   width: 160px;
   height: 160px;
   border-radius: 50%;
+  overflow: hidden;
   img {
     width: 100%;
     height: 100%;

@@ -1,43 +1,46 @@
-import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { PWValidation } from '@/lib/Validation';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
-import axios from 'axios';
+import { editPassword, logout } from '@/lib/api';
+import { useNavigate } from 'react-router';
+import { useSetRecoilState } from 'recoil';
+import { LoginState } from '@/states/stateLogin';
 
 interface EditPasswordBody {
   oldPassword: string;
   newPassword: string;
+  pwCheck: string;
 }
 
 const UserInfo = () => {
-  const [profileImg, setProfileImg]: string | null = useState('/public/user.png');
-  const imgRef = useRef();
-
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting, isDirty, isValid },
-    reset,
+    formState: { errors },
   } = useForm<EditPasswordBody>({ mode: 'onChange' });
 
+  const navigate = useNavigate();
+  const setIsLoggedIn = useSetRecoilState(LoginState);
+
   // 비밀번호 수정 핸들러
-  const onSubmit = ({ oldPassword, newPassword }: EditPasswordBody) => {
-    console.log('old PW: ', oldPassword);
-    console.log('new PW: ', newPassword);
+  const editUserPassword = async ({ oldPassword, newPassword }: EditPasswordBody) => {
     const body = {
       oldPassword,
       newPassword,
     };
-    axios
-      .post('/user/updatePassword/{id}', body)
+    await editPassword(body)
       .then(res => {
         if (res.success) {
-          console.log('비밀번호 변경 성공!', res);
+          alert('비밀번호 변경이 완료되었습니다.\n다시 로그인하여 주시기 바랍니다.');
+          logout();
+          localStorage.removeItem('authToken');
+          setIsLoggedIn(false);
+          navigate('/login');
         }
       })
-      .catch(error => console.log('비밀번호 변경 실패', error));
+      .catch(error => console.error('비밀번호 변경 실패', error));
   };
 
   return (
@@ -45,36 +48,45 @@ const UserInfo = () => {
       <Title>
         <h2>비밀번호 수정</h2>
       </Title>
-      <FormWrapper onSubmit={handleSubmit(onSubmit)}>
+      <FormWrapper onSubmit={handleSubmit(editUserPassword)}>
         <Label>
           Password
+          {errors?.oldPassword && <Error>{errors.oldPassword.message}</Error>}
           <Input
             type="password"
+            maxLength={20}
             placeholder="현재 비밀번호를 입력해 주세요."
-            maxLength={16}
-            {...(register('password'), PWValidation)}
+            {...register('oldPassword', PWValidation)}
           />
         </Label>
         <Label>
           New Password
+          {errors?.newPassword && <Error>{errors.newPassword.message}</Error>}
           <Input
             type="password"
+            maxLength={20}
             placeholder="8자 이상의 새 비밀번호를 입력해 주세요."
-            maxLength={16}
-            {...(register('password'), PWValidation)}
+            {...register('newPassword', {
+              required: '새 비밀번호 입력은 필수 입력입니다.',
+              validate: {
+                value: (pw: string | undefined) => {
+                  if (watch('oldPassword') === pw) return '이전에 사용했던 비밀번호 입니다.';
+                },
+              },
+            })}
           />
         </Label>
         <Label>
           New Password Check
+          {errors?.pwCheck && <Error>{errors.pwCheck.message}</Error>}
           <Input
             type="password"
             placeholder="새 비밀번호를 다시 입력해 주세요."
-            maxLength={16}
-            {...register('ConfirmPW', {
-              required: '비밀번호는 필수 입력입니다.',
+            {...register('pwCheck', {
+              required: '비밀번호 확인은 필수 입력입니다.',
               validate: {
-                value: (val: string | undefined) => {
-                  if (watch('password') !== val) return '비밀번호가 일치하지 않습니다.';
+                value: (pw: string | undefined) => {
+                  if (watch('newPassword') !== pw) return '비밀번호가 일치하지 않습니다.';
                 },
               },
             })}
@@ -114,13 +126,13 @@ const FormWrapper = styled.form`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 24px;
+  gap: 18px;
   width: 500px;
   height: 400px;
 `;
 
 const Label = styled.label`
-  width: 340px;
+  width: 320px;
   /* border: 1px solid red; */
   font-family: 'ABeeZee', sans-serif;
   font-size: 0.8rem;
@@ -147,6 +159,12 @@ const Input = styled.input`
   &.profile-img {
     display: none;
   }
+`;
+
+const Error = styled.span`
+  margin-left: 10px;
+  font-size: 0.7rem;
+  color: ${props => props.theme.red};
 `;
 
 const EditBtnWrapper = styled.div`

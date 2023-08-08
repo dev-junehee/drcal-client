@@ -95,7 +95,11 @@ export const editMyPage = async (body: EditMyPageBody) => {
 // 비밀번호 변경
 export const editPassword = async (body: editPasswordBody) => {
   try {
-    const res = await authInstance.post('/user/updatePassword', body);
+    const res = await instance.post('/user/updatePassword', body, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('비밀번호 변경 실패', error);
@@ -165,7 +169,7 @@ export const createAnnual = async (body: CreateAnnualBody) => {
 };
 
 // 연차 내용 수정
-export const editAnnual = async (body: EditAnuualBody, scheduleId: number) => {
+export const editAnnual = async (body: EditAnnualBody, scheduleId: number) => {
   try {
     const res = await authInstance.post(`/schedule/annual/${scheduleId}/update`, body);
     return res.data;
