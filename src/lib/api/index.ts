@@ -17,17 +17,6 @@ const instance = axios.create({
   },
 });
 
-const authToken = localStorage.getItem('authToken');
-const token = authToken || '';
-
-const authInstance = axios.create({
-  baseURL: 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com',
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `${token}`,
-  },
-});
-
 // 로그인
 export const login = async (body: LoginBody) => {
   try {
@@ -61,16 +50,6 @@ export const signUp = async (body: SignUpBody) => {
 // 마이페이지
 export const getMyPage = async () => {
   try {
-    const res = await authInstance.get('/user/myPage');
-    return res.data;
-  } catch (error) {
-    console.log('마이페이지 조회 실패', error);
-  }
-};
-
-// 마이페이지 다른헤더
-export const getMyPage2 = async () => {
-  try {
     const res = await instance.get('/user/myPage', {
       headers: {
         Authorization: `${localStorage.getItem('authToken')}`,
@@ -85,7 +64,11 @@ export const getMyPage2 = async () => {
 // 마이페이지 수정
 export const editMyPage = async (body: EditMyPageBody) => {
   try {
-    const res = await authInstance.post('/user/editUser', body);
+    const res = await instance.post('/user/editUser', body, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('마이페이지 수정 실패', error);
@@ -151,7 +134,11 @@ export const getDuty = async (date: string) => {
 // 요청 내역 확인
 export const getRequest = async (userId: number) => {
   try {
-    const res = await authInstance.get(`/schedule/${userId}`);
+    const res = await instance.get(`/schedule/${userId}`, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('요청 내역 확인 실패', error);
@@ -161,7 +148,11 @@ export const getRequest = async (userId: number) => {
 // 연차 등록
 export const createAnnual = async (body: CreateAnnualBody) => {
   try {
-    const res = await authInstance.post('/schedule/create/annual', body);
+    const res = await instance.post('/schedule/create/annual', body, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('연차 등록 요청 실패', error);
@@ -171,7 +162,11 @@ export const createAnnual = async (body: CreateAnnualBody) => {
 // 연차 내용 수정
 export const editAnnual = async (body: EditAnnualBody, scheduleId: number) => {
   try {
-    const res = await authInstance.post(`/schedule/annual/${scheduleId}/update`, body);
+    const res = await instance.post(`/schedule/annual/${scheduleId}/update`, body, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('연차 내용 수정 실패', error);
@@ -181,7 +176,11 @@ export const editAnnual = async (body: EditAnnualBody, scheduleId: number) => {
 // 연차 신청 취소
 export const cancelAnnual = async (scheduleId: number) => {
   try {
-    const res = await authInstance.post(`/schedule/annual/delete?id=${scheduleId}`);
+    const res = await instance.post(`/schedule/annual/delete?id=${scheduleId}`, {
+      headers: {
+        Authorization: `${localStorage.getItem('authToken')}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.log('연차 신청 취소 실패', error);
@@ -191,7 +190,7 @@ export const cancelAnnual = async (scheduleId: number) => {
 // 당직 등록 (사용 여부 체크!)
 export const createDuty = async (body: CreateDutyBody) => {
   try {
-    const res = await authInstance.post('/schedule/create/duty', body);
+    const res = await instance.post('/schedule/create/duty', body);
     return res.data;
   } catch (error) {
     console.log('당직 등록 실패', error);
@@ -201,7 +200,7 @@ export const createDuty = async (body: CreateDutyBody) => {
 // 당직 내용 수정
 export const editDuty = async (body: EditDutyBody, scheduleId: number) => {
   try {
-    const res = await authInstance.post(`/schedule/duty/${scheduleId}/update`, body);
+    const res = await instance.post(`/schedule/duty/${scheduleId}/update`, body);
     return res.data;
   } catch (error) {
     console.log('당직 내용 수정 실패', error);
