@@ -1,21 +1,28 @@
 import { useModal } from '@/hooks/useModal';
+import { cancelAnnual } from '@/lib/api';
 import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 
-const CheckModal = ({ type }: { type: string }) => {
+const CheckModal = ({ type }: { type: string | number }) => {
   const navigate = useNavigate();
   const { closeModal } = useModal();
 
   const destination = `/${type}`;
 
-  const handleOnClickYes = () => {
-    closeModal();
-    navigate(destination);
+  const handleOnClickYes = async () => {
+    if (typeof type === 'number') {
+      await cancelAnnual(type, { id: type });
+      console.log(type);
+      closeModal();
+    } else {
+      closeModal();
+      navigate(destination);
+    }
   };
 
   return (
     <Container>
-      <div>신청내역을 확인하시겠습니까?</div>
+      {typeof type === 'string' && <div>신청내역을 확인하시겠습니까?</div>}
       <BtnWrap>
         <AnswerBtn className="yseBtn" onClick={() => handleOnClickYes()}>
           네
