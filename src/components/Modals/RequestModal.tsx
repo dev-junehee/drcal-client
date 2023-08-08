@@ -1,13 +1,16 @@
 import { styled } from 'styled-components';
 import Btn from '@/components/Buttons/Btn';
 import { useForm } from 'react-hook-form';
-import { createAnnual, editDuty, getDuty } from '@/lib/api';
+import { createAnnual, editAnnual, editDuty, getDuty } from '@/lib/api';
 import { useModal } from '@/hooks/useModal';
 import { useState } from 'react';
 import { FiAlertCircle } from 'react-icons/fi';
 import CheckModal from './checkModal';
+import { useRecoilValue } from 'recoil';
+import { scheduleIdState } from '@/states/stateScheduleId';
 
 export const RequestModal = ({ type }: { type: string }) => {
+  const scheduleId = useRecoilValue(scheduleIdState);
   const { openModal, closeModal } = useModal();
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -21,9 +24,13 @@ export const RequestModal = ({ type }: { type: string }) => {
 
   const onSubmit = async data => {
     setErrorMessage('');
-    if (type !== 'duty') {
+    if (type === 'annual') {
       try {
-        await createAnnual({ startDate: data.startDate, endDate: data.endDate, reason: data.reason });
+        await createAnnual({
+          startDate: data.startDate,
+          endDate: data.endDate,
+          reason: data.reason,
+        });
         closeModal();
         openModal(modalData);
       } catch (error) {
@@ -34,12 +41,11 @@ export const RequestModal = ({ type }: { type: string }) => {
     if (type === 'duty') {
       try {
         const res = await getDuty(data.startDate.toString());
-        const scheduleId = res.item.id;
-        console.log(res.item);
+        const scheduleIds = res.item.id;
 
-        if (scheduleId !== 0) {
+        if (scheduleIds !== 0) {
           try {
-            await editDuty({ startDate: data.endDate }, scheduleId);
+            await editDuty({ startDate: data.endDate }, scheduleIds);
             closeModal();
             openModal(modalData);
           } catch (error) {
@@ -54,6 +60,23 @@ export const RequestModal = ({ type }: { type: string }) => {
         console.log('기존 날짜에 당직 스케쥴이 없습니다.', error);
       }
     }
+    if (type === 'annualEdit') {
+      try {
+        await editAnnual(
+          {
+            startDate: data.startDate,
+            endDate: data.endDate,
+            reason: data.reason,
+          },
+          scheduleId,
+        );
+        closeModal();
+        openModal(modalData);
+      } catch (error) {
+        setErrorMessage('연차 수정 요청에 실패하였습니다.');
+        console.log('연차 수정 요청 실패', error);
+      }
+    }
   };
 
   return (
@@ -66,12 +89,13 @@ export const RequestModal = ({ type }: { type: string }) => {
         <div className="inputTitle">{type === 'duty' ? '변경 희망 날짜' : '휴가 종료일'}</div>
         <input type="date" {...register('endDate')} />
       </InputContainer>
-      {type === 'annual' && (
-        <InputContainer>
-          <div className="inputTitle">신청 사유</div>
-          <textarea className="reasonBox" {...register('reason')} />
-        </InputContainer>
-      )}
+      {type === 'annual' ||
+        ('annualEdit' && (
+          <InputContainer>
+            <div className="inputTitle">신청 사유</div>
+            <textarea className="reasonBox" {...register('reason')} />
+          </InputContainer>
+        ))}
       {errorMessage && (
         <InfoBox>
           <FiAlertCircle />

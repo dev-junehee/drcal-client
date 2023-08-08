@@ -136,6 +136,12 @@ export const getCategory = (category: string) => {
 
 export const getEvaluation = (eveluation: string) => {
   if (eveluation === 'STANDBY') {
-    return '대기중';
+    return '대기';
+  } else if (eveluation === 'APPROVED') {
+    return '승인';
+  } else if (eveluation === 'REJECTED') {
+    return '반려';
+  } else if (eveluation === 'CANCELED') {
+    return '취소';
   }
 };
