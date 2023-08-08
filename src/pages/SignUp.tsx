@@ -41,9 +41,7 @@ const SignUp = () => {
   // 등록된 병원 리스트 확인 (Select Box)
   const getHospital = async () => {
     await getHospitalList().then(res => {
-      console.log(res);
       if (res.success) {
-        console.log('병원 리스트 호출 성공', res.item);
         setHospitalInfo(res.item);
         const hospitalNames = res.item.map((v: { hospitalName: string }) => v.hospitalName);
         setHospitalList(hospitalNames);
@@ -53,16 +51,12 @@ const SignUp = () => {
 
   // 선택한 병원의 과 확인 (Select Box)
   const getHospitalDeptList = async (hospitalName: string) => {
-    console.log('선택한 병원명 : ', hospitalName);
-    console.log('병원들 : ', hospitalList);
     const hospitalId: number = hospitalList.indexOf(hospitalName) + 1;
-    console.log('병원ID : ', hospitalId);
     if (hospitalId) {
       await getDeptList(hospitalId)
         .then(res => {
           if (res.success) {
             setHospitalDeptInfo(Object.values(res.item));
-            console.log('과 정보', hospitalDeptInfo);
             const deptList = Object.values(
               res.item.map((v: { deptName: string }) => v.deptName).sort((a: number, b: number) => (a < b ? -1 : 1)),
             );
@@ -81,7 +75,6 @@ const SignUp = () => {
   const userSignUp = async ({ email, password, name, hospital, dept, phone }: SignUpBody) => {
     const hospitalId = hospitalInfo.find(v => v.hospitalName === hospital).hospitalId;
     const deptId = hospitalDeptInfo.find(v => v.deptName === dept).deptId;
-    console.log(hospitalId, deptId);
     const body = {
       email,
       password,
@@ -90,13 +83,9 @@ const SignUp = () => {
       deptId,
       phone,
     };
-    console.log(body);
     await signUp(body)
       .then(res => {
-        console.log(res);
         if (res.success) {
-          console.log('회원가입 body', body);
-          console.log('회원가입 성공', res);
           if (confirm('회원가입 성공!\n로그인 페이지로 이동하시겠습니까?')) {
             navigate('/login');
           }
