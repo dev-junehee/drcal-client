@@ -1,4 +1,4 @@
-import { getRequest2 } from '@/lib/api';
+import { getRequest } from '@/lib/api';
 import { UserDataState } from '@/states/stateUserdata';
 import { getCategory, getEvaluation } from '@/utils/decode';
 import { useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ const RequestList = () => {
   useEffect(() => {
     const getList = async () => {
       console.log(userID);
-      const res = await getRequest2(userID);
+      const res = await getRequest(userID);
       setRequestLists(res.item);
     };
     getList();
@@ -50,7 +50,12 @@ const RequestList = () => {
                   ? requestLists[key].startDate
                   : requestLists[key].startDate + '~' + requestLists[key].endDate}
               </div>
-              <div className="box5">{getEvaluation(requestLists[key].evaluation)}</div>
+              <div className="box5">
+                <BtnBox className={requestLists[key].evaluation}>
+                  <Dot />
+                  {getEvaluation(requestLists[key].evaluation)}
+                </BtnBox>
+              </div>
               <div className="box6">변경</div>
             </DataWrap>
           ))}
@@ -78,6 +83,9 @@ const TableContainer = styled.div`
   gap: 16px;
   border-bottom: 1px solid ${props => props.theme.gray};
   border-top: 1px solid ${props => props.theme.gray};
+  height: 900px;
+  min-height: 300px;
+  overflow: scroll;
 `;
 const DataWrap = styled.div`
   padding: 16px 0;
@@ -87,6 +95,7 @@ const DataWrap = styled.div`
   &:first-child {
     border-bottom: 1px solid ${props => props.theme.gray};
     font-weight: 700;
+    position: sticky;
   }
   &:last-child {
     margin-bottom: 16px;
@@ -108,10 +117,42 @@ const DataWrap = styled.div`
   }
   .box5 {
     flex: 1;
+    display: flex;
+    justify-content: center;
   }
   .box6 {
     flex: 2;
   }
 `;
+const BtnBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  height: 30px;
+  border-radius: 20px;
+  background-color: ${props => props.theme.primary};
+  color: ${props => props.theme.white};
+  margin: 0;
 
+  &.STANDBY {
+    background-color: ${props => props.theme.green};
+  }
+  &.APPROVED {
+    background-color: ${props => props.theme.blue};
+  }
+  &.REJECTED {
+    background-color: ${props => props.theme.red};
+  }
+  &.CANCELED {
+    background-color: ${props => props.theme.middleGray};
+  }
+`;
+const Dot = styled.div`
+  width: 12px;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  margin-right: 8px;
+`;
 export default RequestList;
