@@ -10,11 +10,23 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { styled } from 'styled-components';
 
+type Request = {
+  id: number;
+  user_id: number;
+  hospital_id: number;
+  category: string;
+  startDate: string;
+  endDate: string;
+  evaluation: string;
+  createdAt: string;
+  updated_at: string;
+};
+
 const RequestList = () => {
   const userDataState = useRecoilValue(UserDataState);
   const userID = userDataState.id;
   const setScheduleId = useSetRecoilState(scheduleIdState);
-  const [requestLists, setRequestLists] = useState({});
+  const [requestLists, setRequestLists] = useState<Record<string, Request>>({});
   const { openModal } = useModal();
 
   useEffect(() => {
@@ -110,6 +122,7 @@ const RequestList = () => {
 };
 const Container = styled.div`
   padding: 50px 100px;
+  min-width: 700px;
 `;
 const Select = styled.select`
   width: 100px;
@@ -127,8 +140,6 @@ const TableContainer = styled.div`
   border-bottom: 1px solid ${props => props.theme.gray};
   border-top: 1px solid ${props => props.theme.gray};
   height: 900px;
-  min-height: 300px;
-  min-width
   position: relative;
 `;
 const ListWrap = styled.div`

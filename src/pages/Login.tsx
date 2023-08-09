@@ -36,7 +36,9 @@ const Login = () => {
 
     if (Object.keys(validationErrors).length > 0) {
       Object.entries(validationErrors).forEach(([field, message]) => {
-        setError(field, { type: 'manual', message });
+        if (field === 'email' || field === 'password') {
+          setError(field, { type: 'manual', message });
+        }
       });
     } else {
       try {
