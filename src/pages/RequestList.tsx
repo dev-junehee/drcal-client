@@ -121,8 +121,9 @@ const RequestList = () => {
   );
 };
 const Container = styled.div`
-  padding: 50px 100px;
+  padding: 0 100px;
   min-width: 700px;
+  height: 100%;
 `;
 const Select = styled.select`
   width: 100px;
@@ -139,7 +140,7 @@ const TableContainer = styled.div`
   flex-direction: column;
   border-bottom: 1px solid ${props => props.theme.gray};
   border-top: 1px solid ${props => props.theme.gray};
-  height: 900px;
+  max-height: 60%;
   position: relative;
 `;
 const ListWrap = styled.div`

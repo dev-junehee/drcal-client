@@ -9,12 +9,18 @@ import CheckModal from './checkModal';
 import { useRecoilValue } from 'recoil';
 import { scheduleIdState } from '@/states/stateScheduleId';
 
+type DataBody = {
+  id: number;
+  startDate: Date;
+  endDate: Date;
+  reason: string;
+};
+
 export const RequestModal = ({ type }: { type: string }) => {
   const scheduleId = useRecoilValue(scheduleIdState);
   const { openModal, closeModal } = useModal();
   const [errorMessage, setErrorMessage] = useState('');
-
-  const { handleSubmit, register } = useForm();
+  const { handleSubmit, register } = useForm<DataBody>();
 
   const modalData = {
     isOpen: true,
@@ -22,7 +28,7 @@ export const RequestModal = ({ type }: { type: string }) => {
     content: <CheckModal type={'request'} />,
   };
 
-  const onSubmit = async data => {
+  const onSubmit = async (data: DataBody) => {
     setErrorMessage('');
     if (type === 'annual') {
       try {
@@ -89,13 +95,12 @@ export const RequestModal = ({ type }: { type: string }) => {
         <div className="inputTitle">{type === 'duty' ? '변경 희망 날짜' : '휴가 종료일'}</div>
         <input type="date" {...register('endDate')} />
       </InputContainer>
-      {type === 'annual' ||
-        ('annualEdit' && (
-          <InputContainer>
-            <div className="inputTitle">신청 사유</div>
-            <textarea className="reasonBox" {...register('reason')} />
-          </InputContainer>
-        ))}
+      {(type === 'annual' || type === 'annualEdit') && (
+        <InputContainer>
+          <div className="inputTitle">신청 사유</div>
+          <textarea className="reasonBox" {...register('reason')} />
+        </InputContainer>
+      )}
       {errorMessage && (
         <InfoBox>
           <FiAlertCircle />

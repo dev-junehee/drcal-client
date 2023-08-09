@@ -23,17 +23,27 @@ interface SignUpBody {
   phone: string;
 }
 
+interface Hospital {
+  hospitalName: string;
+  hospitalId: number;
+}
+
+interface Department {
+  deptName: string;
+  deptId: number;
+}
+
 const SignUp = () => {
   const [hospitalList, setHospitalList] = useState<string[]>([]);
-  const [hospitalInfo, setHospitalInfo] = useState([]);
+  const [hospitalInfo, setHospitalInfo] = useState<Hospital[]>([]); // 타입 변경
   const [hospitalDeptList, setHospitalDeptList] = useState<string[]>([]);
-  const [hospitalDeptInfo, setHospitalDeptInfo] = useState([]);
+  const [hospitalDeptInfo, setHospitalDeptInfo] = useState<Department[]>([]); // 타입 변경
 
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SignUpBody>({ mode: 'onChange' });
 
   const navigate = useNavigate();
@@ -57,7 +67,7 @@ const SignUp = () => {
         .then(res => {
           if (res.success) {
             setHospitalDeptInfo(Object.values(res.item));
-            const deptList = Object.values(
+            const deptList: string[] = Object.values(
               res.item.map((v: { deptName: string }) => v.deptName).sort((a: number, b: number) => (a < b ? -1 : 1)),
             );
             setHospitalDeptList(deptList);
@@ -73,8 +83,23 @@ const SignUp = () => {
 
   // 회원가입 핸들러
   const userSignUp = async ({ email, password, name, hospital, dept, phone }: SignUpBody) => {
-    const hospitalId = hospitalInfo.find(v => v.hospitalName === hospital).hospitalId;
-    const deptId = hospitalDeptInfo.find(v => v.deptName === dept).deptId;
+    let hospitalId = 0;
+    let deptId = 0;
+
+    const hospitalInfoItem = hospitalInfo.find((v: Hospital) => v.hospitalName === hospital);
+    if (hospitalInfoItem) {
+      hospitalId = hospitalInfoItem.hospitalId;
+    }
+
+    const deptInfoItem = hospitalDeptInfo.find((v: Department) => v.deptName === dept);
+    if (deptInfoItem) {
+      deptId = deptInfoItem.deptId;
+    }
+
+    if (hospitalId === 0 || deptId === 0) {
+      console.error('병원 정보 불러오기 실패.');
+      return;
+    }
     const body = {
       email,
       password,
@@ -192,7 +217,7 @@ const SignUp = () => {
             </Label>
           </InfoWrapper>
         </InfoContainer>
-        <Btn content="회원가입" disabled={isSubmitting} />
+        <Btn content="회원가입" />
 
         <AlreadyAccount>
           <span>계정이 이미 있으신가요?</span>

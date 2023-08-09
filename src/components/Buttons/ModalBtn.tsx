@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-const ModalBtn = ({ handler }) => {
+interface ModalBtnProps {
+  handler: () => void;
+}
+
+const ModalBtn: React.FC<ModalBtnProps> = ({ handler }) => {
   return <Container onClick={handler}>신청하기</Container>;
 };
 
