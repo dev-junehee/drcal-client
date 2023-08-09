@@ -9,12 +9,19 @@ import { UserDataState } from '@/states/stateUserdata';
 import { useRecoilState } from 'recoil';
 import { login, editMyPage } from '@/lib/api';
 
-interface EditProfileBody {
+interface ProfileBody {
   name: string;
   password: string;
   deptName: string;
   phone: string;
   image: string;
+}
+
+interface EditProfileBody {
+  name: string;
+  deptId: number;
+  phone: string;
+  image: string | null;
 }
 
 interface Password {
@@ -31,17 +38,22 @@ const UserInfo = () => {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<EditProfileBody, LoginBody>({ mode: 'onChange' });
+  } = useForm<ProfileBody, LoginBody>({ mode: 'onChange' });
 
   const [user] = useRecoilState<UserData>(UserDataState);
   const [passwordChecked, setPasswordChecked] = useState<boolean>(false);
-  const [imgPreview, setImgPreview] = useState('/public/user.png');
+  const [imgPreview, setImgPreview] = useState<string>('/public/user.png');
   const userImg = watch('image');
+  console.log('이미지', userImg);
 
   useEffect(() => {
     if (userImg && userImg.length > 0) {
       const file = userImg[0];
-      setImgPreview(URL.createObjectURL(file));
+      if (typeof file !== 'string') {
+        setImgPreview(URL.createObjectURL(file));
+      } else {
+        console.log('Invalid file type or not a File/Blob');
+      }
     }
   }, [userImg]);
 
@@ -53,7 +65,7 @@ const UserInfo = () => {
     };
     await login(body)
       .then(res => {
-        if (res.status === 200) {
+        if (res?.status === 200) {
           setPasswordChecked(!passwordChecked);
         }
       })
@@ -66,22 +78,23 @@ const UserInfo = () => {
     deptName,
     phone = user.phone,
     image = user.profileImageUrl,
-  }: EditProfileBody) => {
-    const findKeyByValue = (obj: deptDecode, value: string) => {
+  }: ProfileBody) => {
+    const findKeyByValue = (obj: deptDecode, value: string): number => {
       for (const key in obj) {
         if (obj[key] === value) {
-          return key;
+          return Number(key);
         }
       }
-      return null;
+      return 0;
     };
-    const deptId = findKeyByValue(hospitalDecode[user.hospitalId].dept, deptName);
-    const body = {
+    const deptId: number = findKeyByValue(hospitalDecode[user.hospitalId].dept, deptName);
+    const body: EditProfileBody = {
       name,
       deptId,
       phone,
-      image: FileList.length > 0 ? FileList[0] : null,
+      image: image === null ? FileList.name : null,
     };
+    console.log('body', body);
     if (confirm('개인정보를 수정하시겠습니까?')) {
       editMyPage(body)
         .then(res => {

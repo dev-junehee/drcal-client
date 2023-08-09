@@ -10,8 +10,13 @@ import {
   EditDutyBody,
 } from '@/lib/types';
 
+const host =
+  window.location.hostname === 'localhost'
+    ? 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com'
+    : 'api';
+
 const instance = axios.create({
-  baseURL: 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com',
+  baseURL: host,
   headers: {
     'Content-Type': 'application/json',
   },
