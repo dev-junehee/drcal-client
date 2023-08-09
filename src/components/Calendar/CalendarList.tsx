@@ -2,35 +2,36 @@ import { styled } from 'styled-components';
 import ExelBtn from '../Buttons/ExelBtn';
 import { useState } from 'react';
 import { Schedule } from '@/lib/types';
-import { getLevel } from '@/utils/decode';
+import { getLevel, getDataCategory } from '@/utils/decode';
+import dayjs from 'dayjs';
 
 const CalendarList = ({ scheduleData }: { scheduleData: Schedule[] }) => {
   const [listData] = useState<Schedule[]>(scheduleData);
 
+  const sortedData = [...listData].sort((a, b) => dayjs(a.startDate).diff(dayjs(b.startDate)));
+
   return (
     <Container>
       <Header>
-        <ExelBtn />
+        <ExelBtn data={sortedData} />
       </Header>
       <ListHead>
-        <span className="date">날짜</span>
         <span className="category">유형</span>
-        <span className="name">이름</span>
         <span className="dept">파트</span>
+        <span className="name">이름</span>
         <span className="level">직급</span>
+        <span className="date start-date">시작날짜</span>
+        <span className="date end-date">종료날짜</span>
       </ListHead>
       <ListBody>
-        {listData.map((data, index) => (
+        {sortedData.map((data, index) => (
           <ListItem key={index} className={index % 2 === 0 ? 'line' : ''}>
-            {data.category === 'DUTY' ? (
-              <span className="date">{data.startDate}</span>
-            ) : (
-              <span className="date">{data.startDate + ' - ' + data.endDate}</span>
-            )}
-            <span className="category">휴가</span>
-            <span className="name">{data.name}</span>
+            <span className="category">{getDataCategory(data.category)}</span>
             <span className="dept">{data.deptName}</span>
+            <span className="name">{data.name}</span>
             <span className="level">{getLevel(data.level)}</span>
+            <span className="date start-date">{data.startDate}</span>
+            <span className="date end-date">{data.endDate}</span>
           </ListItem>
         ))}
       </ListBody>
@@ -69,7 +70,6 @@ const ListHead = styled.div`
   }
   .date {
     flex-grow: 1.5;
-    flex-basis: 0;
   }
   .category {
     flex-grow: 0.5;
@@ -82,6 +82,8 @@ const ListHead = styled.div`
   }
   .level {
     flex-grow: 1;
+  }
+  .end-date {
     padding-right: 17px;
   }
 `;
