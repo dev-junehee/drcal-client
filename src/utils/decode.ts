@@ -125,3 +125,23 @@ export const getPhone = (phone: string) => {
   if (part === null) return phone;
   return `${part[1]}-${part[2]}-${part[3]}`;
 };
+
+export const getCategory = (category: string) => {
+  if (category === 'ANNUAL') {
+    return '휴가 신청';
+  } else {
+    return '당직 변경 신청';
+  }
+};
+
+export const getEvaluation = (eveluation: string) => {
+  if (eveluation === 'STANDBY') {
+    return '대기';
+  } else if (eveluation === 'APPROVED') {
+    return '승인';
+  } else if (eveluation === 'REJECTED') {
+    return '반려';
+  } else if (eveluation === 'CANCELED') {
+    return '취소';
+  }
+};

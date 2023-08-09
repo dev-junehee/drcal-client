@@ -27,6 +27,7 @@ export const CalDutylModal = ({ date }: { date: string }) => {
       const data = await getDuty(date);
       setDuty(data.item);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
