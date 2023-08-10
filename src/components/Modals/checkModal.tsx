@@ -14,9 +14,11 @@ const CheckModal = ({ type }: { type: string | number }) => {
       await cancelAnnual(type, { id: type });
       console.log(type);
       closeModal();
+      location.reload();
     } else {
       closeModal();
       navigate(destination);
+      location.reload();
     }
   };
 
