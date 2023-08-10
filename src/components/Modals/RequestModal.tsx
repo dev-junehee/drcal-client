@@ -51,7 +51,7 @@ export const RequestModal = ({ type }: { type: string }) => {
 
         if (scheduleIds !== 0) {
           try {
-            await editDuty({ startDate: data.endDate }, scheduleIds);
+            await editDuty({ startDate: data.startDate, updateDate: data.endDate }, scheduleIds);
             closeModal();
             openModal(modalData);
           } catch (error) {
