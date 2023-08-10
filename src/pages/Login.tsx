@@ -70,30 +70,36 @@ const Login = () => {
         <h1>어서오세요!</h1>
         <FormWrap onSubmit={handleSubmit(onSubmit)} name="loginForm">
           <InputContainer>
-            <div className="inputTitle">email</div>
+            <ErrorBox>
+              <div className="inputTitle">email</div>
+              {errors.email && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  <span className="info-text">{errors.email.message}</span>
+                </InfoBox>
+              )}
+            </ErrorBox>
             <input type="email" placeholder="이메일을 입력해주세요." {...register('email')} />
-            {errors.email && (
-              <InfoBox>
-                <FiAlertCircle />
-                <span className="info-text">{errors.email.message}</span>
-              </InfoBox>
-            )}
           </InputContainer>
           <InputContainer>
-            <div className="inputTitle">password</div>
+            <ErrorBox>
+              <div className="inputTitle">password</div>
+              {errors.password && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  <span className="info-text">{errors.password.message}</span>
+                </InfoBox>
+              )}
+            </ErrorBox>
             <input type="password" placeholder="비밀번호를 입력해주세요." {...register('password')} />
-            {errors.password && (
-              <InfoBox>
-                <FiAlertCircle />
-                <span className="info-text">{errors.password.message}</span>
-              </InfoBox>
-            )}
-            {loginError && (
-              <InfoBox>
-                <FiAlertCircle />
-                <span className="info-text">{loginError}</span>
-              </InfoBox>
-            )}
+            <RejectLogin>
+              {loginError && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  <span className="info-text">{loginError}</span>
+                </InfoBox>
+              )}
+            </RejectLogin>
           </InputContainer>
           <InputContainer>
             <Btn content={'로그인'} />
@@ -186,28 +192,41 @@ const InputContainer = styled.div`
   .inputTitle {
     font-size: 14px;
     font-family: 'ABeeZee', sans-serif;
-    margin-bottom: 8px;
   }
   button {
-    margin-top: 62px;
+    margin-top: 10px;
   }
   &:first-child {
     margin-bottom: 16px;
   }
 `;
-
+const ErrorBox = styled.div`
+  display: flex;
+  align-items: center;
+  width: 320px;
+  height: 20px;
+  margin-bottom: 4px;
+`;
 const InfoBox = styled.div`
-  margin-top: 8px;
   display: flex;
   align-items: center;
   color: red;
   font-size: 12px;
+  margin-left: 10px;
   .info-text {
-    margin-left: 8px;
+    margin-left: 4px;
   }
 `;
 const SignUpLink = styled.div`
   font-size: 14px;
+`;
+const RejectLogin = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 320px;
+  height: 20px;
+  margin: 20px 0 10px;
 `;
 
 export default Login;
