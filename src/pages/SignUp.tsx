@@ -140,23 +140,27 @@ const SignUp = () => {
             <span>가입 정보</span>
 
             <Label>
-              Email
-              {errors?.email && (
-                <InfoBox>
-                  <FiAlertCircle />
-                  <div className="info-text">{errors.email.message}</div>
-                </InfoBox>
-              )}
+              <ErrorBox>
+                Email
+                {errors?.email && (
+                  <InfoBox>
+                    <FiAlertCircle />
+                    <div className="info-text">{errors.email.message}</div>
+                  </InfoBox>
+                )}
+              </ErrorBox>
               <Input type="email" placeholder="kim@doctor.kr" {...register('email', emailValidation)} />
             </Label>
             <Label>
-              Password
-              {errors?.password && (
-                <InfoBox>
-                  <FiAlertCircle />
-                  <div className="info-text">{errors.password.message}</div>
-                </InfoBox>
-              )}
+              <ErrorBox>
+                Password
+                {errors?.password && (
+                  <InfoBox>
+                    <FiAlertCircle />
+                    <div className="info-text">{errors.password.message}</div>
+                  </InfoBox>
+                )}
+              </ErrorBox>
               <Input
                 type="password"
                 maxLength={20}
@@ -165,13 +169,15 @@ const SignUp = () => {
               />
             </Label>
             <Label>
-              Password Check
-              {errors?.pwCheck && (
-                <InfoBox>
-                  <FiAlertCircle />
-                  <div className="info-text">{errors.pwCheck.message}</div>
-                </InfoBox>
-              )}
+              <ErrorBox>
+                Password Check
+                {errors?.pwCheck && (
+                  <InfoBox>
+                    <FiAlertCircle />
+                    <div className="info-text">{errors.pwCheck.message}</div>
+                  </InfoBox>
+                )}
+              </ErrorBox>
               <Input
                 type="password"
                 placeholder="비밀번호를 다시 입력해 주세요."
@@ -189,23 +195,27 @@ const SignUp = () => {
           <InfoWrapper>
             <span>유저 정보</span>
             <Label>
-              name
-              {errors?.name && (
-                <InfoBox>
-                  <FiAlertCircle />
-                  <div className="info-text">{errors.name.message}</div>
-                </InfoBox>
-              )}
+              <ErrorBox>
+                name
+                {errors?.name && (
+                  <InfoBox>
+                    <FiAlertCircle />
+                    <div className="info-text">{errors.name.message}</div>
+                  </InfoBox>
+                )}
+              </ErrorBox>
               <Input type="text" placeholder="김의사" maxLength={10} {...register('name', nameValidation)} />
             </Label>
             <Label>
-              Hospital
-              {errors?.hospital && (
-                <InfoBox>
-                  <FiAlertCircle />
-                  {errors.hospital.message}
-                </InfoBox>
-              )}
+              <ErrorBox>
+                Hospital
+                {errors?.hospital && (
+                  <InfoBox>
+                    <FiAlertCircle />
+                    <div className="info-text">{errors.hospital.message}</div>
+                  </InfoBox>
+                )}
+              </ErrorBox>
               <select
                 required
                 defaultValue="default"
@@ -223,13 +233,15 @@ const SignUp = () => {
               </select>
             </Label>
             <Label>
-              Part
-              {errors?.dept && (
-                <InfoBox>
-                  <FiAlertCircle />
-                  {errors.dept.message}
-                </InfoBox>
-              )}
+              <ErrorBox>
+                Part
+                {errors?.dept && (
+                  <InfoBox>
+                    <FiAlertCircle />
+                    <div className="info-text">{errors.dept.message}</div>
+                  </InfoBox>
+                )}
+              </ErrorBox>
               <select required defaultValue="default" {...register('dept', deptValidation)}>
                 <option value="default" disabled hidden>
                   근무 파트를 선택해 주세요.
@@ -246,13 +258,15 @@ const SignUp = () => {
               </select>
             </Label>
             <Label>
-              Phone Number
-              {errors?.phone && (
-                <InfoBox>
-                  <FiAlertCircle />
-                  <div className="info-text">{errors.phone.message}</div>
-                </InfoBox>
-              )}
+              <ErrorBox>
+                Phone Number
+                {errors?.phone && (
+                  <InfoBox>
+                    <FiAlertCircle />
+                    <div className="info-text">{errors.phone.message}</div>
+                  </InfoBox>
+                )}
+              </ErrorBox>
               <Input
                 type="text"
                 placeholder="하이픈(-) 없이 입력하세요."
@@ -386,6 +400,13 @@ const Input = styled.input`
   font-family: 'Pretendard', sans-serif;
 `;
 
+const ErrorBox = styled.div`
+  display: flex;
+  align-items: center;
+  width: 320px;
+  height: 20px;
+`;
+
 const Option = styled.option`
   &.default {
     color: red;
@@ -411,8 +432,9 @@ const InfoBox = styled.div`
   align-items: center;
   color: red;
   font-size: 12px;
+  margin-left: 10px;
   .info-text {
     font-family: 'Pretendard', 'sans-serif';
-    margin-left: 8px;
+    margin-left: 4px;
   }
 `;

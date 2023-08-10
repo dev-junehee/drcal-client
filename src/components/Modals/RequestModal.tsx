@@ -45,6 +45,7 @@ export const RequestModal = ({ type }: { type: string }) => {
       }
     }
     if (type === 'duty') {
+      console.log(data.startDate, data.endDate);
       try {
         const res = await getDuty(data.startDate.toString());
         const scheduleIds = res.item.id;
