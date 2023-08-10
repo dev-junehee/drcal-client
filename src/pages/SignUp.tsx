@@ -12,6 +12,7 @@ import {
 } from '@/lib/Validation';
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
+import { FiAlertCircle } from 'react-icons/fi';
 
 interface SignUpBody {
   email: string;
@@ -131,12 +132,22 @@ const SignUp = () => {
 
             <Label>
               Email
-              {errors?.email && <Error>{errors.email.message}</Error>}
+              {errors?.email && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  <div className="info-text">{errors.email.message}</div>
+                </InfoBox>
+              )}
               <Input type="email" placeholder="kim@doctor.kr" {...register('email', emailValidation)} />
             </Label>
             <Label>
               Password
-              {errors?.password && <Error>{errors.password.message}</Error>}
+              {errors?.password && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  <div className="info-text">{errors.password.message}</div>
+                </InfoBox>
+              )}
               <Input
                 type="password"
                 maxLength={20}
@@ -146,7 +157,12 @@ const SignUp = () => {
             </Label>
             <Label>
               Password Check
-              {errors?.pwCheck && <Error>{errors.pwCheck.message}</Error>}
+              {errors?.pwCheck && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  <div className="info-text">{errors.pwCheck.message}</div>
+                </InfoBox>
+              )}
               <Input
                 type="password"
                 placeholder="비밀번호를 다시 입력해 주세요."
@@ -165,12 +181,22 @@ const SignUp = () => {
             <span>유저 정보</span>
             <Label>
               name
-              {errors?.name && <Error>{errors.name.message}</Error>}
+              {errors?.name && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  <div className="info-text">{errors.name.message}</div>
+                </InfoBox>
+              )}
               <Input type="text" placeholder="김의사" maxLength={10} {...register('name', nameValidation)} />
             </Label>
             <Label>
               Hospital
-              {errors?.hospital && <Error>{errors.hospital.message}</Error>}
+              {errors?.hospital && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  {errors.hospital.message}
+                </InfoBox>
+              )}
               <select
                 required
                 defaultValue="default"
@@ -189,7 +215,12 @@ const SignUp = () => {
             </Label>
             <Label>
               Part
-              {errors?.dept && <Error>{errors.dept.message}</Error>}
+              {errors?.dept && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  {errors.dept.message}
+                </InfoBox>
+              )}
               <select required defaultValue="default" {...register('dept', deptValidation)}>
                 <option value="default" disabled hidden>
                   근무 파트를 선택해 주세요.
@@ -207,7 +238,12 @@ const SignUp = () => {
             </Label>
             <Label>
               Phone Number
-              {errors?.phone && <Error>{errors.phone.message}</Error>}
+              {errors?.phone && (
+                <InfoBox>
+                  <FiAlertCircle />
+                  <div className="info-text">{errors.phone.message}</div>
+                </InfoBox>
+              )}
               <Input
                 type="text"
                 placeholder="하이픈(-) 없이 입력하세요."
@@ -238,12 +274,14 @@ const SignUp = () => {
 export default SignUp;
 
 const Container = styled.div`
+  box-sizing: border-box;
+
   display: flex;
   justify-content: flex-end;
   align-items: center;
   width: 100%;
   height: 100%;
-  padding-right: 16px;
+  padding: 60px;
 `;
 
 const SignUpFormContainer = styled.form`
@@ -253,7 +291,7 @@ const SignUpFormContainer = styled.form`
   align-items: center;
   gap: 16px;
   width: 900px;
-  height: 900px;
+  height: 100%;
   border-radius: 10px;
   margin-right: 20px;
   background-color: ${props => props.theme.white};
@@ -261,8 +299,9 @@ const SignUpFormContainer = styled.form`
 
 const Title = styled.div`
   h2 {
-    font-size: 2rem;
-    font-weight: 600;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
   }
 `;
 
@@ -306,12 +345,6 @@ const Option = styled.option`
   }
 `;
 
-const Error = styled.span`
-  margin-left: 10px;
-  font-size: 0.7rem;
-  color: ${props => props.theme.red};
-`;
-
 const AlreadyAccount = styled.div`
   display: flex;
   gap: 8px;
@@ -323,5 +356,16 @@ const AlreadyAccount = styled.div`
     &:hover {
       opacity: 0.9;
     }
+  }
+`;
+const InfoBox = styled.div`
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  color: red;
+  font-size: 12px;
+  .info-text {
+    font-family: 'Pretendard', 'sans-serif';
+    margin-left: 8px;
   }
 `;

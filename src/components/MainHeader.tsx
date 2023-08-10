@@ -21,21 +21,21 @@ const MainHeader = () => {
 export default MainHeader;
 
 const Container = styled.div`
+  box-sizing: border-box;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   width: 100%;
   height: 64px;
+  padding: 0 70px;
   color: ${props => props.theme.gray};
   font-weight: 500;
 `;
 
 const HosPitalName = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 8px;
-  margin: 32px;
   svg {
     width: 20px;
     height: 20px;
