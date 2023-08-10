@@ -35,14 +35,12 @@ const RequestList = () => {
     setIsLoading(true);
     const getList = async () => {
       const res = await getRequest(userID);
-      console.log(res);
       const sortedItems = Object.values(res.item) as Request[];
       if (sortBy === '최신순') {
         sortedItems.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
       } else if (sortBy === '오래된순') {
         sortedItems.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       }
-      console.log('여기', sortedItems);
       setRequestLists(sortedItems);
       setIsLoading(false);
     };
@@ -112,7 +110,6 @@ const RequestList = () => {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
-  console.log(sortBy);
   return (
     <Container>
       {isLoading && <Loading />}
