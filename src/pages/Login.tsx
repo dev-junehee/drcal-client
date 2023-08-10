@@ -95,23 +95,25 @@ const Login = () => {
             <Btn content={'로그인'} />
           </InputContainer>
         </FormWrap>
-        <div>
+        <SignUpLink>
           <span>아직 계정이 없으신가요? </span>
           <Link to="/signup" className="linkto">
             회원가입
           </Link>
-        </div>
+        </SignUpLink>
       </Wrap>
     </Container>
   );
 };
 
 const Container = styled.div`
-  height: 100%;
+  box-sizing: border-box;
   display: flex;
   justify-content: right;
   align-items: center;
-  padding-right: 60px;
+  height: 100%;
+
+  padding: 60px;
 `;
 const Wrap = styled.div`
   box-sizing: border-box;
@@ -120,8 +122,8 @@ const Wrap = styled.div`
   justify-content: center;
   align-items: center;
   gap: 16px;
-  width: 800px;
-  height: 1120px;
+  width: 600px;
+  height: 100%;
   border-radius: 8px;
   background-color: ${props => props.theme.white};
   h1 {
@@ -141,6 +143,7 @@ const FormWrap = styled.form`
 
 const InputContainer = styled.div`
   .inputTitle {
+    font-size: 14px;
     font-family: 'ABeeZee', sans-serif;
     margin-bottom: 8px;
   }
@@ -161,6 +164,9 @@ const InfoBox = styled.div`
   .info-text {
     margin-left: 8px;
   }
+`;
+const SignUpLink = styled.div`
+  font-size: 14px;
 `;
 
 export default Login;

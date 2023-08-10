@@ -86,7 +86,7 @@ const RequestList = () => {
           <div className="box6">변경</div>
         </DataWrap>
         <ListWrap>
-          {requestLists &&
+          {requestLists ? (
             Object.keys(requestLists).map(key => (
               <DataWrap key={key}>
                 <div className="box1">{Number(key) + 1}</div>
@@ -114,14 +114,18 @@ const RequestList = () => {
                   )}
                 </div>
               </DataWrap>
-            ))}
+            ))
+          ) : (
+            <h1>요청 내역이 없습니다.</h1>
+          )}
         </ListWrap>
       </TableContainer>
     </Container>
   );
 };
 const Container = styled.div`
-  padding: 0 100px;
+  box-sizing: border-box;
+  padding: 0 70px 20px 70px;
   min-width: 700px;
   height: 100%;
 `;
@@ -140,7 +144,7 @@ const TableContainer = styled.div`
   flex-direction: column;
   border-bottom: 1px solid ${props => props.theme.gray};
   border-top: 1px solid ${props => props.theme.gray};
-  max-height: 60%;
+  height: 85%;
   position: relative;
 `;
 const ListWrap = styled.div`
@@ -148,6 +152,7 @@ const ListWrap = styled.div`
   flex-direction: column;
   gap: 16px;
   overflow: scroll;
+  height: 100%;
 `;
 const DataWrap = styled.div`
   padding: 16px 0;
