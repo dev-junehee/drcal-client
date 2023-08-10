@@ -4,8 +4,7 @@ import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
 import { editPassword, logout } from '@/lib/api';
 import { useNavigate } from 'react-router';
-import { useSetRecoilState } from 'recoil';
-import { LoginState } from '@/states/stateLogin';
+import { FiAlertCircle } from 'react-icons/fi';
 
 interface EditPasswordBody {
   oldPassword: string;
@@ -22,7 +21,6 @@ const UserInfo = () => {
   } = useForm<EditPasswordBody>({ mode: 'onChange' });
 
   const navigate = useNavigate();
-  const setIsLoggedIn = useSetRecoilState(LoginState);
 
   // 비밀번호 수정 핸들러
   const editUserPassword = async ({ oldPassword, newPassword }: EditPasswordBody) => {
@@ -36,7 +34,6 @@ const UserInfo = () => {
           alert('비밀번호 변경이 완료되었습니다.\n다시 로그인하여 주시기 바랍니다.');
           logout();
           localStorage.removeItem('authToken');
-          setIsLoggedIn(false);
           navigate('/login');
         }
       })
@@ -51,7 +48,12 @@ const UserInfo = () => {
       <FormWrapper onSubmit={handleSubmit(editUserPassword)}>
         <Label>
           Password
-          {errors?.oldPassword && <Error>{errors.oldPassword.message}</Error>}
+          {errors?.oldPassword && (
+            <InfoBox>
+              <FiAlertCircle />
+              <div className="info-text">{errors.oldPassword.message}</div>
+            </InfoBox>
+          )}
           <Input
             type="password"
             maxLength={20}
@@ -61,7 +63,12 @@ const UserInfo = () => {
         </Label>
         <Label>
           New Password
-          {errors?.newPassword && <Error>{errors.newPassword.message}</Error>}
+          {errors?.newPassword && (
+            <InfoBox>
+              <FiAlertCircle />
+              <div className="info-text">{errors.newPassword.message}</div>
+            </InfoBox>
+          )}
           <Input
             type="password"
             maxLength={20}
@@ -78,7 +85,12 @@ const UserInfo = () => {
         </Label>
         <Label>
           New Password Check
-          {errors?.pwCheck && <Error>{errors.pwCheck.message}</Error>}
+          {errors?.pwCheck && (
+            <InfoBox>
+              <FiAlertCircle />
+              <div className="info-text">{errors.pwCheck.message}</div>
+            </InfoBox>
+          )}
           <Input
             type="password"
             placeholder="새 비밀번호를 다시 입력해 주세요."
@@ -161,12 +173,20 @@ const Input = styled.input`
   }
 `;
 
-const Error = styled.span`
-  margin-left: 10px;
-  font-size: 0.7rem;
-  color: ${props => props.theme.red};
-`;
-
 const EditBtnWrapper = styled.div`
   margin-top: 20px;
 `;
+const InfoBox = styled.div`
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  color: red;
+  font-size: 12px;
+  .info-text {
+    margin-left: 8px;
+  }
+`;
+<InfoBox>
+  <FiAlertCircle />
+  <div className="info-text"></div>
+</InfoBox>;

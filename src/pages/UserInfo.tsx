@@ -8,6 +8,7 @@ import { PWValidation, nameValidation, phoneValidation } from '@/lib/Validation'
 import { UserDataState } from '@/states/stateUserdata';
 import { useRecoilState } from 'recoil';
 import { login, editMyPage } from '@/lib/api';
+import { FiAlertCircle } from 'react-icons/fi';
 import Loading from '@/components/Loading';
 
 interface ProfileBody {
@@ -106,7 +107,7 @@ const UserInfo = () => {
             location.reload();
           }
         })
-        .catch(error => console.log('개인정보 수정 실패', error));
+        .catch(error => console.error('개인정보 수정 실패', error));
     }
     setIsLoading(false);
   };
@@ -132,7 +133,14 @@ const UserInfo = () => {
           <p>개인정보를 안전하게 보호하기 위해 비밀번호를 다시 한 번 확인해 주세요.</p>
           <PWCheckFormWrapper onSubmit={handleSubmit(checkPassword)}>
             <PwCheckLabel>
-              <div className="error">{errors?.password && <Error>{errors.password.message}</Error>}</div>
+              <div className="error">
+                {errors?.password && (
+                  <InfoBox>
+                    <FiAlertCircle />
+                    <div className="info-text">{errors.password.message}</div>
+                  </InfoBox>
+                )}
+              </div>
               <Input
                 type="password"
                 maxLength={20}
@@ -243,12 +251,6 @@ const PwCheckLabel = styled.label`
   }
 `;
 
-const Error = styled.span`
-  margin-left: 10px;
-  font-size: 0.7rem;
-  color: ${props => props.theme.red};
-`;
-
 const UserInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -354,4 +356,14 @@ const ProfileImgEdit = styled.div`
 
 const EditBtnWrapper = styled.div`
   margin-top: 20px;
+`;
+const InfoBox = styled.div`
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  color: red;
+  font-size: 12px;
+  .info-text {
+    margin-left: 8px;
+  }
 `;

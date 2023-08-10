@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import CalendarBody from '@/components/Calendar/CalendarBody';
 import CalendarList from '@/components/Calendar/CalendarList';
-import { useRecoilValue } from 'recoil';
-import { LoginState } from '@/states/stateLogin';
 import { useNavigate } from 'react-router';
 import { getSchedule } from '@/lib/api';
 import { Schedule } from '@/lib/types';
@@ -17,7 +15,6 @@ const Calendar = () => {
   const [dutyActive, setDutyActive] = useState(false);
   const [annualActive, setAnnualActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const isLoggedIn = useRecoilValue(LoginState);
   const navigate = useNavigate();
   const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -29,8 +26,8 @@ const Calendar = () => {
   };
 
   useEffect(() => {
-    !isLoggedIn && navigate('/login');
-    if (isLoggedIn) {
+    !localStorage.getItem('authToken') && navigate('/login');
+    if (localStorage.getItem('authToken')) {
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -148,12 +145,13 @@ export default Calendar;
 const Container = styled.div`
   position: relative;
   width: 100%;
+  min-width: 1100px;
   height: calc(100% - 64px);
-  padding: 20px;
+  padding: 0 70px 40px 70px;
   box-sizing: border-box;
   .today-button {
     position: absolute;
-    left: 120px;
+    left: 168px;
     width: 45px;
     height: 30px;
     border: none;
@@ -180,7 +178,7 @@ const WeekLoading = styled.div`
 
 const ToggleButton = styled.div`
   position: absolute;
-  right: 20px;
+  right: 70px;
 `;
 
 const Button = styled.button`
@@ -213,7 +211,7 @@ const FilterButtons = styled.div`
   position: absolute;
   right: 0px;
   display: flex;
-  margin-right: 120px;
+  margin-right: 190px;
   gap: 5px;
   button {
     width: 45px;

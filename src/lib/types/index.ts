@@ -72,6 +72,7 @@ export interface CreateDutyBody {
 //당직 내용 수정
 export interface EditDutyBody {
   startDate: Date;
+  updateDate: Date;
 }
 
 //캘린더 조회

@@ -90,7 +90,7 @@ const CalendarBody = ({
           }
         }
         //당직 출력
-        if (cal.category === 'DUTY' && cal.startDate === dateObj.format('YYYY-MM-DD')) {
+        if (cal.category === 'DUTY' && cal.endDate === dateObj.format('YYYY-MM-DD')) {
           arrDuty.push(cal.name, cal.level);
         }
       });
@@ -237,6 +237,7 @@ const Duty = styled.div`
   font-weight: 400;
   color: ${props => props.theme.primary};
   box-sizing: border-box;
+  cursor: pointer;
   .duty-name {
     margin-right: 5px;
     font-weight: 700;
@@ -248,7 +249,8 @@ const Annual = styled.div`
   align-items: center;
   width: 75%;
   height: 20px;
-  color: ${props => props.theme.gray};
+  color: ${props => props.theme.secondary};
   font-weight: 400;
   box-sizing: border-box;
+  cursor: pointer;
 `;

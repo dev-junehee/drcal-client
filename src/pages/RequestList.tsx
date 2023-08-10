@@ -8,8 +8,7 @@ import { UserDataState } from '@/states/stateUserdata';
 import { getCategory, getEvaluation } from '@/utils/decode';
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-
-import { styled } from 'styled-components';
+import styled from 'styled-components';
 
 type Request = {
   id: number;
@@ -27,19 +26,28 @@ const RequestList = () => {
   const userDataState = useRecoilValue(UserDataState);
   const userID = userDataState.id;
   const setScheduleId = useSetRecoilState(scheduleIdState);
-  const [requestLists, setRequestLists] = useState<Record<string, Request>>({});
+  const [requestLists, setRequestLists] = useState<Request[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { openModal } = useModal();
+  const [sortBy, setSortBy] = useState('최신순');
 
   useEffect(() => {
     setIsLoading(true);
     const getList = async () => {
       const res = await getRequest(userID);
-      setRequestLists(res.item);
+      console.log(res);
+      const sortedItems = Object.values(res.item) as Request[];
+      if (sortBy === '최신순') {
+        sortedItems.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+      } else if (sortBy === '오래된순') {
+        sortedItems.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      }
+      console.log('여기', sortedItems);
+      setRequestLists(sortedItems);
+      setIsLoading(false);
     };
     getList();
-    setIsLoading(false);
-  }, [userID]);
+  }, [userID, sortBy]);
 
   const handleOnClickEdit = (category: string, id: number) => {
     if (category === 'ANNUAL') {
@@ -47,7 +55,7 @@ const RequestList = () => {
       const modalData = {
         isOpen: true,
         title: '휴가 신청 수정',
-        content: <RequestModal type={'annualEdit'} />,
+        content: <RequestModal type="annualEdit" />,
       };
       openModal(modalData);
     } else {
@@ -55,7 +63,7 @@ const RequestList = () => {
       const modalData = {
         isOpen: true,
         title: '당직 신청 수정',
-        content: <RequestModal type={'duty'} />,
+        content: <RequestModal type="duty" />,
       };
       openModal(modalData);
     }
@@ -68,15 +76,49 @@ const RequestList = () => {
       content: <CheckModal type={id} />,
     };
     openModal(modalData);
-    console.log(id);
   };
 
+  const sortedKeys: number[] = Object.keys(requestLists).map(str => Number(str));
+
+  const renderRequestItems = () => {
+    return sortedKeys.map(key => (
+      <DataWrap key={requestLists[key].id}>
+        <div className="box1">{key + 1}</div>
+        <div className="box2">{getCategory(requestLists[key].category)}</div>
+        <div className="box3">{requestLists[key].createdAt.slice(0, 10)}</div>
+        <div className="box4">
+          {requestLists[key].startDate === requestLists[key].endDate
+            ? requestLists[key].startDate
+            : requestLists[key].startDate + '~' + requestLists[key].endDate}
+        </div>
+        <div className="box5">
+          <BtnBox className={requestLists[key].evaluation}>
+            <Dot />
+            {getEvaluation(requestLists[key].evaluation)}
+          </BtnBox>
+        </div>
+        <div className="box6">
+          {requestLists[key].evaluation === 'STANDBY' && (
+            <>
+              <div onClick={() => handleOnClickEdit(requestLists[key].category, requestLists[key].id)}>[수정]</div>
+              <div onClick={() => handleOnClickCancle(requestLists[key].id)}>[취소]</div>
+            </>
+          )}
+        </div>
+      </DataWrap>
+    ));
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortBy(e.target.value);
+  };
+  console.log(sortBy);
   return (
     <Container>
       {isLoading && <Loading />}
       <Header>
         <h1>요청 내역</h1>
-        <Select name="filterMenu">
+        <Select name="filterMenu" onChange={handleSortChange}>
           <option value="최신순">최신순</option>
           <option value="오래된순">오래된순</option>
         </Select>
@@ -91,50 +133,25 @@ const RequestList = () => {
           <div className="box6">변경</div>
         </DataWrap>
         <ListWrap>
-          {requestLists &&
-            Object.keys(requestLists).map(key => (
-              <DataWrap key={key}>
-                <div className="box1">{Number(key) + 1}</div>
-                <div className="box2">{getCategory(requestLists[key].category)}</div>
-                <div className="box3">{requestLists[key].createdAt.slice(0, 10)}</div>
-                <div className="box4">
-                  {requestLists[key].startDate === requestLists[key].endDate
-                    ? requestLists[key].startDate
-                    : requestLists[key].startDate + '~' + requestLists[key].endDate}
-                </div>
-                <div className="box5">
-                  <BtnBox className={requestLists[key].evaluation}>
-                    <Dot />
-                    {getEvaluation(requestLists[key].evaluation)}
-                  </BtnBox>
-                </div>
-                <div className="box6">
-                  {requestLists[key].evaluation === 'STANDBY' && (
-                    <>
-                      <div onClick={() => handleOnClickEdit(requestLists[key].category, requestLists[key].id)}>
-                        [수정]
-                      </div>
-                      <div onClick={() => handleOnClickCancle(requestLists[key].id)}>[취소]</div>
-                    </>
-                  )}
-                </div>
-              </DataWrap>
-            ))}
+          {Object.keys(requestLists).length > 0 ? renderRequestItems() : <EmptyList>요청 내역이 없습니다.</EmptyList>}
         </ListWrap>
       </TableContainer>
     </Container>
   );
 };
 const Container = styled.div`
-  padding: 0 100px;
+  box-sizing: border-box;
+  padding: 0 70px;
   min-width: 700px;
-  height: 100%;
+  max-height: 95%;
 `;
 const Select = styled.select`
   width: 100px;
+  height: 30px;
 `;
 const Header = styled.header`
   display: flex;
+  height: 40px;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 16px;
@@ -145,7 +162,7 @@ const TableContainer = styled.div`
   flex-direction: column;
   border-bottom: 1px solid ${props => props.theme.gray};
   border-top: 1px solid ${props => props.theme.gray};
-  max-height: 60%;
+  height: 85%;
   position: relative;
 `;
 const ListWrap = styled.div`
@@ -153,6 +170,10 @@ const ListWrap = styled.div`
   flex-direction: column;
   gap: 16px;
   overflow: scroll;
+  height: 100%;
+  &&::-webkit-scrollbar {
+    display: none;
+  }
 `;
 const DataWrap = styled.div`
   padding: 16px 0;
@@ -228,5 +249,14 @@ const Dot = styled.div`
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   margin-right: 8px;
+`;
+const EmptyList = styled.div`
+  color: ${props => props.theme.lightGray};
+  font-size: 28px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 export default RequestList;

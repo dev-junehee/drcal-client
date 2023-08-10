@@ -41,7 +41,7 @@ export const RequestModal = ({ type }: { type: string }) => {
         openModal(modalData);
       } catch (error) {
         setErrorMessage('연차 등록 요청에 실패하였습니다.');
-        console.log('연차 등록 요청 실패', error);
+        console.error('연차 등록 요청 실패', error);
       }
     }
     if (type === 'duty') {
@@ -51,19 +51,19 @@ export const RequestModal = ({ type }: { type: string }) => {
 
         if (scheduleIds !== 0) {
           try {
-            await editDuty({ startDate: data.endDate }, scheduleIds);
+            await editDuty({ startDate: data.startDate, updateDate: data.endDate }, scheduleIds);
             closeModal();
             openModal(modalData);
           } catch (error) {
             setErrorMessage('당직 변경 요청에 실패하였습니다.');
-            console.log('당직 변경 요청 실패', error);
+            console.error('당직 변경 요청 실패', error);
           }
         } else {
           setErrorMessage('기존 날짜에 당직 스케쥴이 없습니다.');
         }
       } catch (error) {
         setErrorMessage('기존 날짜에 당직 스케쥴이 없습니다.');
-        console.log('기존 날짜에 당직 스케쥴이 없습니다.', error);
+        console.error('기존 날짜에 당직 스케쥴이 없습니다.', error);
       }
     }
     if (type === 'annualEdit') {
@@ -80,7 +80,7 @@ export const RequestModal = ({ type }: { type: string }) => {
         openModal(modalData);
       } catch (error) {
         setErrorMessage('연차 수정 요청에 실패하였습니다.');
-        console.log('연차 수정 요청 실패', error);
+        console.error('연차 수정 요청 실패', error);
       }
     }
   };
