@@ -8,6 +8,7 @@ import { PWValidation, nameValidation, phoneValidation } from '@/lib/Validation'
 import { UserDataState } from '@/states/stateUserdata';
 import { useRecoilState } from 'recoil';
 import { login, editMyPage } from '@/lib/api';
+import Loading from '@/components/Loading';
 
 interface ProfileBody {
   name: string;
@@ -42,9 +43,9 @@ const UserInfo = () => {
 
   const [user] = useRecoilState<UserData>(UserDataState);
   const [passwordChecked, setPasswordChecked] = useState<boolean>(false);
-  const [imgPreview, setImgPreview] = useState<string>('/public/user.png');
+  const [imgPreview, setImgPreview] = useState<string>('/user.png');
+  const [isLoading, setIsLoading] = useState(false);
   const userImg = watch('image');
-  console.log('이미지', userImg);
 
   useEffect(() => {
     if (userImg && userImg.length > 0) {
@@ -52,13 +53,14 @@ const UserInfo = () => {
       if (typeof file !== 'string') {
         setImgPreview(URL.createObjectURL(file));
       } else {
-        console.log('Invalid file type or not a File/Blob');
+        console.error('Invalid file type or not a File/Blob');
       }
     }
   }, [userImg]);
 
   // 비밀번호 재확인
   const checkPassword = async (password: Password) => {
+    setIsLoading(true);
     const body = {
       email: user.email,
       password: password.password,
@@ -70,6 +72,7 @@ const UserInfo = () => {
         }
       })
       .catch(error => console.error('비밀번호 확인 실패', error));
+    setIsLoading(false);
   };
 
   // 개인정보 수정
@@ -94,8 +97,8 @@ const UserInfo = () => {
       phone,
       image: image === null ? FileList.name : null,
     };
-    console.log('body', body);
     if (confirm('개인정보를 수정하시겠습니까?')) {
+      setIsLoading(true);
       editMyPage(body)
         .then(res => {
           if (res.success) {
@@ -105,6 +108,7 @@ const UserInfo = () => {
         })
         .catch(error => console.log('개인정보 수정 실패', error));
     }
+    setIsLoading(false);
   };
 
   // 프로필 사진 업로드 핸들러
@@ -121,6 +125,7 @@ const UserInfo = () => {
     <>
       {!passwordChecked ? (
         <PWCheckContainer>
+          {isLoading && <Loading />}
           <Title>
             <h2>비밀번호 확인</h2>
           </Title>
@@ -140,6 +145,7 @@ const UserInfo = () => {
         </PWCheckContainer>
       ) : (
         <UserInfoContainer>
+          {isLoading && <Loading />}
           <Title>
             <h2>개인정보 수정</h2>
           </Title>
