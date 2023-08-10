@@ -107,7 +107,7 @@ const UserInfo = () => {
             location.reload();
           }
         })
-        .catch(error => console.log('개인정보 수정 실패', error));
+        .catch(error => console.error('개인정보 수정 실패', error));
     }
     setIsLoading(false);
   };

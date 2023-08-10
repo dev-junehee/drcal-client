@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import CalendarBody from '@/components/Calendar/CalendarBody';
 import CalendarList from '@/components/Calendar/CalendarList';
-import { useRecoilValue } from 'recoil';
-import { LoginState } from '@/states/stateLogin';
 import { useNavigate } from 'react-router';
 import { getSchedule } from '@/lib/api';
 import { Schedule } from '@/lib/types';
