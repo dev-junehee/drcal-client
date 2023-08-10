@@ -68,7 +68,6 @@ const RequestList = () => {
       content: <CheckModal type={id} />,
     };
     openModal(modalData);
-    console.log(id);
   };
 
   const sortedKeys = Object.keys(requestLists).reverse();
@@ -125,7 +124,9 @@ const RequestList = () => {
           <div className="box5">상태</div>
           <div className="box6">변경</div>
         </DataWrap>
-        {Object.keys(requestLists).length > 0 ? renderRequestItems() : <EmptyList>요청 내역이 없습니다.</EmptyList>}
+        <ListWrap>
+          {Object.keys(requestLists).length > 0 ? renderRequestItems() : <EmptyList>요청 내역이 없습니다.</EmptyList>}
+        </ListWrap>
       </TableContainer>
     </Container>
   );

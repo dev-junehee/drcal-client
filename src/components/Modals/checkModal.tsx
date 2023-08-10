@@ -12,11 +12,12 @@ const CheckModal = ({ type }: { type: string | number }) => {
   const handleOnClickYes = async () => {
     if (typeof type === 'number') {
       await cancelAnnual(type, { id: type });
-      console.log(type);
       closeModal();
+      location.reload();
     } else {
       closeModal();
       navigate(destination);
+      location.reload();
     }
   };
 
