@@ -143,7 +143,7 @@ const Container = styled.div`
 
 const Logo = styled.div`
   margin-top: 60px;
-  background-image: url('src/assets/logo.png');
+  background-image: url('/logo.png');
   background-size: contain;
   background-repeat: no-repeat;
   width: 160px;

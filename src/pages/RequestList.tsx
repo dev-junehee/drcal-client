@@ -1,3 +1,4 @@
+import Loading from '@/components/Loading';
 import { RequestModal } from '@/components/Modals/RequestModal';
 import CheckModal from '@/components/Modals/checkModal';
 import { useModal } from '@/hooks/useModal';
@@ -27,14 +28,17 @@ const RequestList = () => {
   const userID = userDataState.id;
   const setScheduleId = useSetRecoilState(scheduleIdState);
   const [requestLists, setRequestLists] = useState<Record<string, Request>>({});
+  const [isLoading, setIsLoading] = useState(false);
   const { openModal } = useModal();
 
   useEffect(() => {
+    setIsLoading(true);
     const getList = async () => {
       const res = await getRequest(userID);
       setRequestLists(res.item);
     };
     getList();
+    setIsLoading(false);
   }, [userID]);
 
   const handleOnClickEdit = (category: string, id: number) => {
@@ -69,6 +73,7 @@ const RequestList = () => {
 
   return (
     <Container>
+      {isLoading && <Loading />}
       <Header>
         <h1>요청 내역</h1>
         <Select name="filterMenu">
