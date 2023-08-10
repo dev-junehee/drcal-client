@@ -6,10 +6,9 @@ import { BsFillPersonFill } from 'react-icons/bs';
 import { FaRegPaperPlane } from 'react-icons/fa';
 import AnnualBtn from '@/components/Buttons/AnnualBtn';
 import DutyBtn from '@/components/Buttons/DutyBtn';
-import { dname, getLevel } from '@/utils/decode';
+import { getLevel, deptName } from '@/utils/decode';
 import { logout, getMyPage } from '@/lib/api';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { LoginState, UserState } from '@/states/stateLogin';
+import { useRecoilState } from 'recoil';
 import { UserDataState } from '@/states/stateUserdata';
 
 interface MenuItemProps {
@@ -30,8 +29,6 @@ const SideBar = () => {
   const [User, setUser] = useRecoilState(UserDataState);
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [isMyPageActive, setIsMyPageActive] = useState('false');
-  const setIsLoggedIn = useSetRecoilState(LoginState);
-  const setUserState = useSetRecoilState(UserState);
 
   const navigate = useNavigate();
 
@@ -64,8 +61,6 @@ const SideBar = () => {
   const handleClickLogout = async () => {
     await logout();
     localStorage.removeItem('authToken');
-    setIsLoggedIn(false);
-    setUserState('');
     navigate('/login');
   };
 
@@ -100,7 +95,7 @@ const SideBar = () => {
       <Wrapper>
         <UserInfo>
           <span className="user-name">{User.name}</span>
-          <span className="user-dept">{dname[User.deptId]}</span>
+          <span className="user-dept">{deptName[User.deptId]}</span>
           <span className="user-level">{getLevel(User.level)}</span>
         </UserInfo>
         <UserSchedule>

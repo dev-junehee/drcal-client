@@ -65,26 +65,20 @@ export const hospitalDecode: hospitalDecode = {
 export const getLevel = (level: string) => {
   if (level == 'PK') {
     return '본과실습생';
-  } else if (level == 'INTERN') {
+  } else if (level === 'INTERN') {
     return '인턴';
-  } else if (level == 'RESIDENT') {
+  } else if (level === 'RESIDENT') {
     return '전공의';
-  } else if (level == 'FELLOW') {
+  } else if (level === 'FELLOW') {
     return '전문의';
   }
 };
 
-export const hname = {
-  1: '서울대학교 병원',
-  2: '연세 세브란스 병원',
-  3: '고려대학교 안암병원',
-};
-
-interface Dname {
+interface deptName {
   [key: number]: string;
 }
 
-export const dname: Dname = {
+export const deptName: deptName = {
   1: '응급의학과',
   2: '내과',
   3: '외과',
@@ -147,6 +141,6 @@ export const getEvaluation = (eveluation: string) => {
 };
 
 export const getDataCategory = (category: string) => {
-  if (category == 'DUTY') return '당직';
-  else if (category == 'ANNUAL') return '휴가';
+  if (category === 'DUTY') return '당직';
+  else if (category === 'ANNUAL') return '휴가';
 };

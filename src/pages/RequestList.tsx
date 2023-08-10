@@ -26,7 +26,7 @@ const RequestList = () => {
   const userDataState = useRecoilValue(UserDataState);
   const userID = userDataState.id;
   const setScheduleId = useSetRecoilState(scheduleIdState);
-  const [requestLists, setRequestLists] = useState<Record<string, Request>>({});
+  const [requestLists, setRequestLists] = useState<Request[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { openModal } = useModal();
   const [sortBy, setSortBy] = useState('최신순');
@@ -35,11 +35,19 @@ const RequestList = () => {
     setIsLoading(true);
     const getList = async () => {
       const res = await getRequest(userID);
-      setRequestLists(res.item);
+      console.log(res);
+      const sortedItems = Object.values(res.item) as Request[];
+      if (sortBy === '최신순') {
+        sortedItems.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+      } else if (sortBy === '오래된순') {
+        sortedItems.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      }
+      console.log('여기', sortedItems);
+      setRequestLists(sortedItems);
+      setIsLoading(false);
     };
     getList();
-    setIsLoading(false);
-  }, [userID]);
+  }, [userID, sortBy]);
 
   const handleOnClickEdit = (category: string, id: number) => {
     if (category === 'ANNUAL') {
@@ -70,12 +78,12 @@ const RequestList = () => {
     openModal(modalData);
   };
 
-  const sortedKeys = Object.keys(requestLists).reverse();
+  const sortedKeys: number[] = Object.keys(requestLists).map(str => Number(str));
 
   const renderRequestItems = () => {
     return sortedKeys.map(key => (
       <DataWrap key={requestLists[key].id}>
-        <div className="box1">{Number(key) + 1}</div>
+        <div className="box1">{key + 1}</div>
         <div className="box2">{getCategory(requestLists[key].category)}</div>
         <div className="box3">{requestLists[key].createdAt.slice(0, 10)}</div>
         <div className="box4">
@@ -104,13 +112,13 @@ const RequestList = () => {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
-
+  console.log(sortBy);
   return (
     <Container>
       {isLoading && <Loading />}
       <Header>
         <h1>요청 내역</h1>
-        <Select name="filterMenu" value={sortBy} onChange={handleSortChange}>
+        <Select name="filterMenu" onChange={handleSortChange}>
           <option value="최신순">최신순</option>
           <option value="오래된순">오래된순</option>
         </Select>
@@ -133,15 +141,17 @@ const RequestList = () => {
 };
 const Container = styled.div`
   box-sizing: border-box;
-  padding: 0 70px 20px 70px;
+  padding: 0 70px;
   min-width: 700px;
-  height: 100%;
+  max-height: 95%;
 `;
 const Select = styled.select`
   width: 100px;
+  height: 30px;
 `;
 const Header = styled.header`
   display: flex;
+  height: 40px;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 16px;
@@ -161,6 +171,9 @@ const ListWrap = styled.div`
   gap: 16px;
   overflow: scroll;
   height: 100%;
+  &&::-webkit-scrollbar {
+    display: none;
+  }
 `;
 const DataWrap = styled.div`
   padding: 16px 0;

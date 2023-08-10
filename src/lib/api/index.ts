@@ -38,7 +38,7 @@ export const login = async (body: LoginBody) => {
     const res = await instance.post('/user/login', body);
     return res;
   } catch (error) {
-    console.log('로그인 실패', error);
+    console.error('로그인 실패', error);
   }
 };
 
@@ -48,7 +48,7 @@ export const logout = async () => {
     const res = await instance.post('/user/logout');
     return res.data;
   } catch (error) {
-    console.log('로그아웃 실패');
+    console.error('로그아웃 실패');
   }
 };
 
@@ -58,7 +58,7 @@ export const signUp = async (body: SignUpBody) => {
     const res = await instance.post('/user/register', body);
     return res.data;
   } catch (error) {
-    console.log('회원가입 실패', error);
+    console.error('회원가입 실패', error);
   }
 };
 
@@ -72,7 +72,7 @@ export const getMyPage = async () => {
     });
     return res.data;
   } catch (error) {
-    console.log('마이페이지 조회 실패', error);
+    console.error('마이페이지 조회 실패', error);
   }
 };
 
@@ -86,7 +86,7 @@ export const editMyPage = async (body: EditMyPageBody) => {
     });
     return res.data;
   } catch (error) {
-    console.log('마이페이지 수정 실패', error);
+    console.error('마이페이지 수정 실패', error);
   }
 };
 
@@ -100,7 +100,7 @@ export const editPassword = async (body: editPasswordBody) => {
     });
     return res.data;
   } catch (error) {
-    console.log('비밀번호 변경 실패', error);
+    console.error('비밀번호 변경 실패', error);
   }
 };
 
@@ -114,7 +114,7 @@ export const getSchedule = async () => {
     });
     return res.data;
   } catch (error) {
-    console.log('캘린더 조회 실패', error);
+    console.error('캘린더 조회 실패', error);
   }
 };
 
@@ -128,7 +128,7 @@ export const getAnnual = async (date: string) => {
     });
     return res.data;
   } catch (error) {
-    console.log('휴가 인원 조회 실패', error);
+    console.error('휴가 인원 조회 실패', error);
   }
 };
 
@@ -142,7 +142,7 @@ export const getDuty = async (date: string) => {
     });
     return res.data;
   } catch (error) {
-    console.log('당직 인원 조회 실패', error);
+    console.error('당직 인원 조회 실패', error);
   }
 };
 
@@ -156,7 +156,7 @@ export const getRequest = async (userId: number) => {
     });
     return res.data;
   } catch (error) {
-    console.log('요청 내역 확인 실패', error);
+    console.error('요청 내역 확인 실패', error);
   }
 };
 
@@ -170,7 +170,7 @@ export const createAnnual = async (body: CreateAnnualBody) => {
     });
     return res.data;
   } catch (error) {
-    console.log('연차 등록 요청 실패', error);
+    console.error('연차 등록 요청 실패', error);
     throw error;
   }
 };
@@ -185,7 +185,7 @@ export const editAnnual = async (body: EditAnnualBody, scheduleId: number) => {
     });
     return res.data;
   } catch (error) {
-    console.log('연차 내용 수정 실패', error);
+    console.error('연차 내용 수정 실패', error);
   }
 };
 
@@ -202,7 +202,7 @@ export const cancelAnnual = async (scheduleId: number, body: cancelAnnualBody) =
     });
     return res.data;
   } catch (error) {
-    console.log('연차 신청 취소 실패', error);
+    console.error('연차 신청 취소 실패', error);
   }
 };
 
@@ -216,7 +216,7 @@ export const createDuty = async (body: CreateDutyBody) => {
     });
     return res.data;
   } catch (error) {
-    console.log('당직 등록 실패', error);
+    console.error('당직 등록 실패', error);
   }
 };
 
@@ -230,7 +230,7 @@ export const editDuty = async (body: EditDutyBody, scheduleId: number) => {
     });
     return res.data;
   } catch (error) {
-    console.log('당직 내용 수정 실패', error);
+    console.error('당직 내용 수정 실패', error);
     throw error;
   }
 };
@@ -241,7 +241,7 @@ export const getHospitalList = async () => {
     const res = await instance.get('/hospital/list');
     return res.data;
   } catch (error) {
-    console.log('병원 정보 리스트 조회 실패', error);
+    console.error('병원 정보 리스트 조회 실패', error);
   }
 };
 
@@ -251,6 +251,6 @@ export const getDeptList = async (hospitalId: number) => {
     const res = await instance.get(`/dept/${hospitalId}/list`);
     return res.data;
   } catch (error) {
-    console.log('병원 과 리스트 조회 실패', error);
+    console.error('병원 과 리스트 조회 실패', error);
   }
 };
