@@ -17,7 +17,6 @@ const Calendar = () => {
   const [dutyActive, setDutyActive] = useState(false);
   const [annualActive, setAnnualActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const isLoggedIn = useRecoilValue(LoginState);
   const navigate = useNavigate();
   const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -29,8 +28,8 @@ const Calendar = () => {
   };
 
   useEffect(() => {
-    !isLoggedIn && navigate('/login');
-    if (isLoggedIn) {
+    !localStorage.getItem('authToken') && navigate('/login');
+    if (localStorage.getItem('authToken')) {
       fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

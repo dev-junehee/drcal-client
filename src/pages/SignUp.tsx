@@ -76,7 +76,7 @@ const SignUp = () => {
             setHospitalDeptList(deptList);
           }
         })
-        .catch(error => console.log(error));
+        .catch(error => console.error(error));
     }
   };
 
@@ -119,7 +119,7 @@ const SignUp = () => {
           }
         }
       })
-      .catch(error => console.log('회원가입 실패', error));
+      .catch(error => console.error('회원가입 실패', error));
   };
 
   return (

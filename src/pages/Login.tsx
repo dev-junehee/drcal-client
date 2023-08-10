@@ -5,8 +5,6 @@ import SignUpValidation from '@/lib/Validation/validation';
 import { useForm } from 'react-hook-form';
 import { FiAlertCircle } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
-import { LoginState } from '@/states/stateLogin';
-import { useRecoilState } from 'recoil';
 import { login } from '@/lib/api';
 import { LoginBody } from '@/lib/types';
 import backgroundLogo from '/backgroundlogo.png';
@@ -14,7 +12,6 @@ import logowhithtext from '/logowithtext.png';
 
 const Login = () => {
   const [loginError, setLoginError] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useRecoilState(LoginState);
   const navigate = useNavigate();
 
   const saveTokenToLocalstorage = (token: string) => {
@@ -22,7 +19,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    isLoggedIn && navigate('/');
+    localStorage.getItem('authToken') && navigate('/');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -49,7 +46,6 @@ const Login = () => {
           setLoginError('');
           const token = response.headers.authorization;
           saveTokenToLocalstorage(token);
-          setIsLoggedIn(true);
           navigate('/');
         } else {
           setLoginError('로그인에 실패하셨습니다.');
