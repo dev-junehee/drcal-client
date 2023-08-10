@@ -62,7 +62,7 @@ const Calendar = () => {
 
   return (
     <Container>
-      {/* {isLoading && <Loading />} */}
+      {isLoading && <Loading />}
       <ToggleButton>
         <Button
           className={toggleButton ? 'calendar-button active' : 'calendar-button'}
@@ -111,7 +111,6 @@ const Calendar = () => {
               <MonthWrapper>{currentMonth.format('YYYY년 M월')}</MonthWrapper>
             </CalendarButtons>
           </Header>
-          {isLoading && <Loading />}
           {scheduleData ? (
             <>
               <Weeks>
