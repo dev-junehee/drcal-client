@@ -140,7 +140,7 @@ const Container = styled.div`
   box-sizing: border-box;
   padding: 0 70px;
   min-width: 700px;
-  max-height: 95%;
+  min-height: 90%;
 `;
 const Select = styled.select`
   width: 100px;
@@ -154,12 +154,14 @@ const Header = styled.header`
   padding-bottom: 16px;
 `;
 const TableContainer = styled.div`
+  box-sizing: border-box;
+
   background-color: ${props => props.theme.white};
   display: flex;
   flex-direction: column;
   border-bottom: 1px solid ${props => props.theme.gray};
   border-top: 1px solid ${props => props.theme.gray};
-  height: 85%;
+  height: 90%;
   position: relative;
 `;
 const ListWrap = styled.div`
