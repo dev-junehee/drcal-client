@@ -9,6 +9,8 @@ import { LoginState } from '@/states/stateLogin';
 import { useRecoilState } from 'recoil';
 import { login } from '@/lib/api';
 import { LoginBody } from '@/lib/types';
+import BGIMAGE1 from '/backgroundlogo.png';
+import BGIMAGE2 from '/logowithtext.png';
 
 const Login = () => {
   const [loginError, setLoginError] = useState('');
@@ -62,6 +64,12 @@ const Login = () => {
 
   return (
     <Container>
+      <ImgContainer1 />
+      <Textwrap>
+        <span>대학병원 의사들을 위한</span>
+        <span>쉽고 빠른 연차 당직 관리 서비스</span>
+      </Textwrap>
+      <ImgContainer2 />
       <Wrap>
         <h1>어서오세요!</h1>
         <FormWrap onSubmit={handleSubmit(onSubmit)} name="loginForm">
@@ -114,6 +122,43 @@ const Container = styled.div`
   height: 100%;
 
   padding: 60px;
+`;
+const ImgContainer1 = styled.div`
+  width: 1050px;
+  height: 400px;
+  padding: 0 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(/backgroundlogo.png);
+  position: absolute;
+  top: unset;
+  bottom: 0;
+  left: 0;
+`;
+const ImgContainer2 = styled.div`
+  width: 300px;
+  height: 400px;
+  padding: 0 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(/logowithtext.png);
+  position: absolute;
+  top: unset;
+  bottom: 580px;
+  left: 100px;
+`;
+const Textwrap = styled.div`
+  color: ${props => props.theme.white};
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: absolute;
+  top: unset;
+  bottom: 650px;
+  left: 100px;
 `;
 const Wrap = styled.div`
   box-sizing: border-box;
