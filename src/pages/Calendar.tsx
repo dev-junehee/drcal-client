@@ -8,28 +8,32 @@ import { LoginState } from '@/states/stateLogin';
 import { useNavigate } from 'react-router';
 import { getSchedule } from '@/lib/api';
 import { Schedule } from '@/lib/types';
+import Loading from '@/components/Loading';
 
 const Calendar = () => {
   const [scheduleData, setScheduleData] = useState<Schedule[]>();
   const [currentMonth, setCurrentMonth] = useState(dayjs());
-  const [toggleButton, settoggleButton] = useState(true);
-  const [dutyActive, setdutyActive] = useState(false);
-  const [annualActive, setannualActive] = useState(false);
+  const [toggleButton, setToggleButton] = useState(true);
+  const [dutyActive, setDutyActive] = useState(false);
+  const [annualActive, setAnnualActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const isLoggedIn = useRecoilValue(LoginState);
   const navigate = useNavigate();
   const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
   const fetchData = async () => {
+    setIsLoading(true);
     const data = await getSchedule();
     setScheduleData(data.item);
+    setIsLoading(false);
   };
 
   useEffect(() => {
     !isLoggedIn && navigate('/login');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (isLoggedIn) {
       fetchData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const prevMonth = () => {
@@ -41,7 +45,7 @@ const Calendar = () => {
   };
 
   const handleClickToggle = () => {
-    settoggleButton(!toggleButton);
+    setToggleButton(!toggleButton);
   };
 
   const handleClickToday = () => {
@@ -49,15 +53,16 @@ const Calendar = () => {
   };
 
   const handleClickDuty = () => {
-    setdutyActive(!dutyActive);
+    setDutyActive(!dutyActive);
   };
 
   const handleClickAnnual = () => {
-    setannualActive(!annualActive);
+    setAnnualActive(!annualActive);
   };
 
   return (
     <Container>
+      {isLoading && <Loading />}
       <ToggleButton>
         <Button
           className={toggleButton ? 'calendar-button active' : 'calendar-button'}
@@ -106,7 +111,6 @@ const Calendar = () => {
               <MonthWrapper>{currentMonth.format('YYYY년 M월')}</MonthWrapper>
             </CalendarButtons>
           </Header>
-
           {scheduleData ? (
             <>
               <Weeks>
@@ -126,7 +130,7 @@ const Calendar = () => {
           ) : (
             <>
               <Weeks></Weeks>
-              <Loading></Loading>
+              <WeekLoading></WeekLoading>
             </>
           )}
         </>
@@ -162,7 +166,7 @@ const Container = styled.div`
   }
 `;
 
-const Loading = styled.div`
+const WeekLoading = styled.div`
   width: 100%;
   height: calc(100% - 90px);
   border-right: 1px solid ${props => props.theme.gray};
