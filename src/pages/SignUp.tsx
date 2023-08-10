@@ -135,7 +135,7 @@ const SignUp = () => {
               {errors?.email && (
                 <InfoBox>
                   <FiAlertCircle />
-                  {errors.email.message}
+                  <div className="info-text">{errors.email.message}</div>
                 </InfoBox>
               )}
               <Input type="email" placeholder="kim@doctor.kr" {...register('email', emailValidation)} />
@@ -145,7 +145,7 @@ const SignUp = () => {
               {errors?.password && (
                 <InfoBox>
                   <FiAlertCircle />
-                  {errors.password.message}
+                  <div className="info-text">{errors.password.message}</div>
                 </InfoBox>
               )}
               <Input
@@ -160,7 +160,7 @@ const SignUp = () => {
               {errors?.pwCheck && (
                 <InfoBox>
                   <FiAlertCircle />
-                  {errors.pwCheck.message}
+                  <div className="info-text">{errors.pwCheck.message}</div>
                 </InfoBox>
               )}
               <Input
@@ -184,7 +184,7 @@ const SignUp = () => {
               {errors?.name && (
                 <InfoBox>
                   <FiAlertCircle />
-                  {errors.name.message}
+                  <div className="info-text">{errors.name.message}</div>
                 </InfoBox>
               )}
               <Input type="text" placeholder="김의사" maxLength={10} {...register('name', nameValidation)} />
@@ -241,7 +241,7 @@ const SignUp = () => {
               {errors?.phone && (
                 <InfoBox>
                   <FiAlertCircle />
-                  {errors.phone.message}
+                  <div className="info-text">{errors.phone.message}</div>
                 </InfoBox>
               )}
               <Input
@@ -359,12 +359,13 @@ const AlreadyAccount = styled.div`
   }
 `;
 const InfoBox = styled.div`
-  margin-top: 8px;
+  margin: 8px 0;
   display: flex;
   align-items: center;
   color: red;
-  font-size: 14px;
+  font-size: 12px;
   .info-text {
+    font-family: 'Pretendard', 'sans-serif';
     margin-left: 8px;
   }
 `;

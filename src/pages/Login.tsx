@@ -160,7 +160,7 @@ const InfoBox = styled.div`
   display: flex;
   align-items: center;
   color: red;
-  font-size: 14px;
+  font-size: 12px;
   .info-text {
     margin-left: 8px;
   }

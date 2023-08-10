@@ -40,7 +40,7 @@ export const CalAnnualModal = ({ date }: { date: string }) => {
 };
 
 const Container = styled.div`
-  height: 280px;
+  min-height: 280px;
   width: 100%;
   display: flex;
   flex-direction: column;
