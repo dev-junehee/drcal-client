@@ -9,8 +9,8 @@ import { LoginState } from '@/states/stateLogin';
 import { useRecoilState } from 'recoil';
 import { login } from '@/lib/api';
 import { LoginBody } from '@/lib/types';
-import BGIMAGE1 from '/backgroundlogo.png';
-import BGIMAGE2 from '/logowithtext.png';
+import backgroundLogo from '/backgroundlogo.png';
+import logowhithtext from '/logowithtext.png';
 
 const Login = () => {
   const [loginError, setLoginError] = useState('');
@@ -120,7 +120,6 @@ const Container = styled.div`
   justify-content: right;
   align-items: center;
   height: 100%;
-
   padding: 60px;
 `;
 const ImgContainer1 = styled.div`
@@ -130,7 +129,7 @@ const ImgContainer1 = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  background-image: url(/backgroundlogo.png);
+  background-image: url(${backgroundLogo});
   position: absolute;
   top: unset;
   bottom: 0;
@@ -143,7 +142,7 @@ const ImgContainer2 = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  background-image: url(/logowithtext.png);
+  background-image: url(${logowhithtext});
   position: absolute;
   top: unset;
   bottom: 580px;
@@ -161,6 +160,7 @@ const Textwrap = styled.div`
   left: 100px;
 `;
 const Wrap = styled.div`
+  z-index: 9;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

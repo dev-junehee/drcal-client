@@ -13,6 +13,8 @@ import {
 import Btn from '@/components/Buttons/Btn';
 import styled from 'styled-components';
 import { FiAlertCircle } from 'react-icons/fi';
+import backgroundLogo from '/backgroundlogo.png';
+import logowhithtext from '/logowithtext.png';
 
 interface SignUpBody {
   email: string;
@@ -297,7 +299,7 @@ const ImgContainer1 = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  background-image: url(/backgroundlogo.png);
+  background-image: url(${backgroundLogo});
   position: absolute;
   top: unset;
   bottom: 0;
@@ -310,7 +312,7 @@ const ImgContainer2 = styled.div`
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  background-image: url(/logowithtext.png);
+  background-image: url(${logowhithtext});
   position: absolute;
   top: unset;
   bottom: 580px;
@@ -329,6 +331,7 @@ const Textwrap = styled.div`
 `;
 
 const SignUpFormContainer = styled.form`
+  z-index: 9;
   display: flex;
   flex-direction: column;
   justify-content: center;
