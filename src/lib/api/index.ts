@@ -161,6 +161,7 @@ export const createAnnual = async (body: CreateAnnualBody) => {
     return res.data;
   } catch (error) {
     console.log('연차 등록 요청 실패', error);
+    throw error;
   }
 };
 
