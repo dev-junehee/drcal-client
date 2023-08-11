@@ -82,7 +82,7 @@ const RequestList = () => {
     return sortedKeys.map(key => (
       <DataWrap key={requestLists[key].id}>
         <div className="box1">{key + 1}</div>
-        <div className="box2">{getCategory(requestLists[key].category)}</div>
+        <div className="box2">{getCategory(requestLists[key].category, requestLists[key].evaluation)}</div>
         <div className="box3">{requestLists[key].createdAt.slice(0, 10)}</div>
         <div className="box4">
           {requestLists[key].startDate === requestLists[key].endDate
