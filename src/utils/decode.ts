@@ -120,18 +120,20 @@ export const getPhone = (phone: string) => {
   return `${part[1]}-${part[2]}-${part[3]}`;
 };
 
-export const getCategory = (category: string) => {
-  if (category === 'ANNUAL') {
-    return '휴가 신청';
-  } else {
+export const getCategory = (category: string, evaluation: string) => {
+  if (category === 'DUTY' && evaluation !== 'APPROVED') {
     return '당직 변경 신청';
+  } else if (category === 'DUTY' && evaluation === 'APPROVED') {
+    return '당직';
+  } else {
+    return '휴가 신청';
   }
 };
 
 export const getEvaluation = (eveluation: string) => {
   if (eveluation === 'STANDBY') {
     return '대기';
-  } else if (eveluation === 'APPROVED') {
+  } else if (eveluation === 'APPROVED' || eveluation === 'COMPLETED') {
     return '승인';
   } else if (eveluation === 'REJECTED') {
     return '반려';

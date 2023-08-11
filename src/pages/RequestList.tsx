@@ -35,14 +35,12 @@ const RequestList = () => {
     setIsLoading(true);
     const getList = async () => {
       const res = await getRequest(userID);
-      console.log(res);
       const sortedItems = Object.values(res.item) as Request[];
       if (sortBy === '최신순') {
         sortedItems.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
       } else if (sortBy === '오래된순') {
         sortedItems.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       }
-      console.log('여기', sortedItems);
       setRequestLists(sortedItems);
       setIsLoading(false);
     };
@@ -84,7 +82,7 @@ const RequestList = () => {
     return sortedKeys.map(key => (
       <DataWrap key={requestLists[key].id}>
         <div className="box1">{key + 1}</div>
-        <div className="box2">{getCategory(requestLists[key].category)}</div>
+        <div className="box2">{getCategory(requestLists[key].category, requestLists[key].evaluation)}</div>
         <div className="box3">{requestLists[key].createdAt.slice(0, 10)}</div>
         <div className="box4">
           {requestLists[key].startDate === requestLists[key].endDate
@@ -112,7 +110,6 @@ const RequestList = () => {
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortBy(e.target.value);
   };
-  console.log(sortBy);
   return (
     <Container>
       {isLoading && <Loading />}
@@ -143,7 +140,7 @@ const Container = styled.div`
   box-sizing: border-box;
   padding: 0 70px;
   min-width: 700px;
-  max-height: 95%;
+  min-height: 90%;
 `;
 const Select = styled.select`
   width: 100px;
@@ -157,12 +154,14 @@ const Header = styled.header`
   padding-bottom: 16px;
 `;
 const TableContainer = styled.div`
+  box-sizing: border-box;
+
   background-color: ${props => props.theme.white};
   display: flex;
   flex-direction: column;
   border-bottom: 1px solid ${props => props.theme.gray};
   border-top: 1px solid ${props => props.theme.gray};
-  height: 85%;
+  height: 90%;
   position: relative;
 `;
 const ListWrap = styled.div`

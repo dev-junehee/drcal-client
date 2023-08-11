@@ -21,7 +21,7 @@ export const CalAnnualModal = ({ date }: { date: string }) => {
         <DataWrap>
           <div>No.</div>
           <div>이름</div>
-          <div>파트</div>
+          <div className="part">파트</div>
           <div>직급</div>
           <div>연락처</div>
         </DataWrap>
@@ -29,7 +29,7 @@ export const CalAnnualModal = ({ date }: { date: string }) => {
           <DataWrap key={index}>
             <div>{index + 1}</div>
             <div>{item.username}</div>
-            <div>{item.deptName}</div>
+            <div className="part">{item.deptName}</div>
             <div>{getLevel(item.level)}</div>
             <div>{getPhone(item.phone)}</div>
           </DataWrap>
@@ -75,6 +75,9 @@ const DataWrap = styled.div`
       flex: 1;
     }
     &:last-child {
+      flex: 3;
+    }
+    &.part {
       flex: 3;
     }
   }

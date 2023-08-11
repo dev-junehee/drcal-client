@@ -47,7 +47,7 @@ export interface EditMyPageBody {
   name: string;
   deptId: number;
   phone: string;
-  image: string | null;
+  image: string | null | unknown;
 }
 
 //연차 등록

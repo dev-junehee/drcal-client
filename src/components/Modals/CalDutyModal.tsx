@@ -19,6 +19,8 @@ const DutyDataInitial = {
   username: '',
 };
 
+const baseUrl = 'http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com';
+
 export const CalDutylModal = ({ date }: { date: string }) => {
   const [duty, setDuty] = useState<DutyData>(DutyDataInitial);
 
@@ -34,7 +36,11 @@ export const CalDutylModal = ({ date }: { date: string }) => {
     <Container>
       <DateWrap>{date}</DateWrap>
       <UserWrap>
-        {duty.profileImageUrl === null ? <UserImg $imgurl="/user.png" /> : <UserImg $imgurl={duty.profileImageUrl} />}
+        {duty.profileImageUrl === null ? (
+          <UserImg $imgurl="/user.png" />
+        ) : (
+          <UserImg $imgurl={baseUrl + duty.profileImageUrl} />
+        )}
         <UserInfo>
           <NameCard>
             <div className="name">{duty.username}</div>
@@ -80,9 +86,11 @@ const UserWrap = styled.div`
 const UserImg = styled.div<ProfileProps>`
   width: 140px;
   height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
   background-image: url(${props => props.$imgurl});
   background-position: center;
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
 `;
 
