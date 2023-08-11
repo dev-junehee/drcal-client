@@ -16,14 +16,7 @@ interface ProfileBody {
   password: string;
   deptName: string;
   phone: string;
-  originImage: string;
-}
-
-interface EditProfileBody {
-  name: string;
-  deptId: number;
-  phone: string;
-  image: string | null;
+  originImage: FileList;
 }
 
 interface Password {
@@ -44,8 +37,10 @@ const UserInfo = () => {
 
   const [user] = useRecoilState<UserData>(UserDataState);
   const [passwordChecked, setPasswordChecked] = useState<boolean>(false);
-  const [profileImg, setProfileImg] = useState('');
-  const [imgPreview, setImgPreview] = useState('/public/user.png');
+  const [imgPreview, setImgPreview] = useState(
+    `http://fastcampus-mini-project-env.eba-khrscmx7.ap-northeast-2.elasticbeanstalk.com${user.profileImageUrl}`,
+  );
+  const [isLoading, setIsLoading] = useState(false);
   const userImg = watch('originImage');
 
   useEffect(() => {
@@ -75,15 +70,9 @@ const UserInfo = () => {
       .catch(error => console.error('비밀번호 확인 실패', error));
     setIsLoading(false);
   };
-  console.log(imgPreview);
 
   // 개인정보 수정
-  const editUserInfo = async ({
-    name = user.name,
-    deptName,
-    phone = user.phone,
-    originImage = user.profileImageUrl,
-  }: EditProfileBody) => {
+  const editUserInfo = async ({ name = user.name, deptName, phone = user.phone, originImage }: ProfileBody) => {
     // 과 ID 찾기
     const findKeyByValue = (obj: deptDecode, value: string) => {
       for (const key in obj) {
@@ -96,26 +85,24 @@ const UserInfo = () => {
     const deptId = findKeyByValue(hospitalDecode[user.hospitalId].dept, deptName);
 
     // 이미지 변환
-    const photoBase64Handler = async img => {
+    const photoBase64Handler = async (img: File): Promise<string | void> => {
       const file = img;
-      console.log(file);
       const reader = new FileReader();
 
-      const base64Promise = new Promise(resolve => {
-        reader.onload = () => {
-          const base64Header = 'data:image/jpeg;base64,'; // 이미지 유형에 맞게 변경
-          const base64Data = reader.result.split(',')[1]; // 쉼표 뒷부분은 데이터 부분
-          const fullBase64String = base64Header + base64Data;
-          resolve(fullBase64String); // 이미지를 base64로 인코딩한 결과를 resolve
-        };
-      });
+      if (file.size < 1024 ** 2) {
+        const base64Promise: Promise<string | void> = new Promise(resolve => {
+          reader.onload = () => {
+            const base64Data = reader.result?.toString().split(',')[1]; // 쉼표 뒷부분은 데이터 부분
+            resolve(base64Data); // 이미지를 base64로 인코딩한 결과를 resolve
+          };
+        });
 
-      reader.readAsDataURL(file);
-      return await base64Promise;
+        reader.readAsDataURL(file);
+        return await base64Promise;
+      } else return alert('이미지 용량이 너무 큽니다.\n1MB보다 작은 용량의 이미지를 사용하세요.');
     };
 
     const image = await photoBase64Handler(originImage[0]);
-    console.log(image);
 
     const body = {
       name,

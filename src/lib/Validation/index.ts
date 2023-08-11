@@ -38,7 +38,7 @@ const deptValidation = {
   required: '근무 파트는 필수 입력입니다.',
   pattern: {
     value: /과/,
-    message: '재직 병원은 필수 입력입니다.',
+    message: '근무 파트는 필수 입력입니다.',
   },
 };
 

@@ -248,9 +248,9 @@ const SignUp = () => {
                 </option>
                 {hospitalDeptList ? (
                   hospitalDeptList.map((v, i) => (
-                    <Option className="default" key={i} value={v}>
+                    <option key={i} value={v}>
                       {v}
-                    </Option>
+                    </option>
                   ))
                 ) : (
                   <></>
@@ -405,12 +405,6 @@ const ErrorBox = styled.div`
   align-items: center;
   width: 320px;
   height: 20px;
-`;
-
-const Option = styled.option`
-  &.default {
-    color: red;
-  }
 `;
 
 const AlreadyAccount = styled.div`
