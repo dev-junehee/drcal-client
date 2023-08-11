@@ -16,7 +16,7 @@ interface ProfileBody {
   password: string;
   deptName: string;
   phone: string;
-  image: string;
+  originImage: string;
 }
 
 interface EditProfileBody {
@@ -44,9 +44,9 @@ const UserInfo = () => {
 
   const [user] = useRecoilState<UserData>(UserDataState);
   const [passwordChecked, setPasswordChecked] = useState<boolean>(false);
-  const [imgPreview, setImgPreview] = useState<string>('/user.png');
-  const [isLoading, setIsLoading] = useState(false);
-  const userImg = watch('image');
+  const [profileImg, setProfileImg] = useState('');
+  const [imgPreview, setImgPreview] = useState('/public/user.png');
+  const userImg = watch('originImage');
 
   useEffect(() => {
     if (userImg && userImg.length > 0) {
@@ -75,15 +75,17 @@ const UserInfo = () => {
       .catch(error => console.error('비밀번호 확인 실패', error));
     setIsLoading(false);
   };
+  console.log(imgPreview);
 
   // 개인정보 수정
-  const editUserInfo = ({
+  const editUserInfo = async ({
     name = user.name,
     deptName,
     phone = user.phone,
-    image = user.profileImageUrl,
-  }: ProfileBody) => {
-    const findKeyByValue = (obj: deptDecode, value: string): number => {
+    originImage = user.profileImageUrl,
+  }: EditProfileBody) => {
+    // 과 ID 찾기
+    const findKeyByValue = (obj: deptDecode, value: string) => {
       for (const key in obj) {
         if (obj[key] === value) {
           return Number(key);
@@ -91,13 +93,37 @@ const UserInfo = () => {
       }
       return 0;
     };
-    const deptId: number = findKeyByValue(hospitalDecode[user.hospitalId].dept, deptName);
-    const body: EditProfileBody = {
+    const deptId = findKeyByValue(hospitalDecode[user.hospitalId].dept, deptName);
+
+    // 이미지 변환
+    const photoBase64Handler = async img => {
+      const file = img;
+      console.log(file);
+      const reader = new FileReader();
+
+      const base64Promise = new Promise(resolve => {
+        reader.onload = () => {
+          const base64Header = 'data:image/jpeg;base64,'; // 이미지 유형에 맞게 변경
+          const base64Data = reader.result.split(',')[1]; // 쉼표 뒷부분은 데이터 부분
+          const fullBase64String = base64Header + base64Data;
+          resolve(fullBase64String); // 이미지를 base64로 인코딩한 결과를 resolve
+        };
+      });
+
+      reader.readAsDataURL(file);
+      return await base64Promise;
+    };
+
+    const image = await photoBase64Handler(originImage[0]);
+    console.log(image);
+
+    const body = {
       name,
       deptId,
       phone,
-      image: image === null ? FileList.name : null,
+      image,
     };
+
     if (confirm('개인정보를 수정하시겠습니까?')) {
       setIsLoading(true);
       editMyPage(body)
@@ -111,16 +137,6 @@ const UserInfo = () => {
     }
     setIsLoading(false);
   };
-
-  // 프로필 사진 업로드 핸들러
-  // const uploadProfileImg = () => {
-  //   const file = imgRef.current?.files[0];
-  //   const reader = new FileReader();
-  //   reader.readAsDataURL(file);
-  //   reader.onloadend = () => {
-  //     setProfileImg(reader.result);
-  //   };
-  // };
 
   return (
     <>
@@ -163,7 +179,7 @@ const UserInfo = () => {
             </ProfileImgWrapper>
             <Label className="profile">
               <ProfileImgEdit>변경</ProfileImgEdit>
-              <Input type="file" accept="image/*" className="profile-img" {...register('image')} />
+              <Input type="file" accept="image/*" className="profile-img" {...register('originImage')} />
             </Label>
             <Label>
               name
@@ -226,17 +242,11 @@ const PWCheckFormWrapper = styled.form`
   justify-content: center;
   align-items: center;
   width: 500px;
-  /* height: 150px; */
 `;
 
 const PwCheckLabel = styled.label`
-  /* display: flex; */
-  /* flex-direction: column; */
   justify-content: center;
-  /* align-items: flex-start; */
   width: 320px;
-  /* gap: 10px; */
-  /* border: 1px solid red; */
   margin-bottom: 20px;
   font-family: 'ABeeZee', sans-serif;
   font-size: 0.8rem;
@@ -246,7 +256,6 @@ const PwCheckLabel = styled.label`
     align-items: center;
     width: 100%;
     height: 20px;
-    /* border: 1px solid red; */
     font-family: 'Pretendard', sans-serif;
   }
 `;
@@ -281,7 +290,6 @@ const FormWrapper = styled.form`
 
 const Label = styled.label`
   width: 320px;
-  /* border: 1px solid red; */
   font-family: 'ABeeZee', sans-serif;
   font-size: 0.8rem;
   &.profile {
