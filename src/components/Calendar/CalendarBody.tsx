@@ -237,6 +237,7 @@ const Duty = styled.div`
   font-weight: 400;
   color: ${props => props.theme.primary};
   box-sizing: border-box;
+  font-size: 0.9rem;
   cursor: pointer;
   .duty-name {
     margin-right: 5px;
@@ -251,6 +252,7 @@ const Annual = styled.div`
   height: 20px;
   color: ${props => props.theme.secondary};
   font-weight: 400;
+  font-size: 0.9rem;
   box-sizing: border-box;
   cursor: pointer;
 `;
