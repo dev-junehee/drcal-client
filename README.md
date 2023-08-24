@@ -27,13 +27,8 @@
 
 ## 🗓️ 프로젝트 소개
 
-> **개 요** : 대학병원 의사들을 위한 쉽고 빠른 당직, 연차 관리 서비스입니다. <br/> > **개발 기간** : 2023. 07. 24. ~ 2023. 08. 11. <br/> > **참고 사항** : 패스트캠퍼스 부트캠프의 프론트엔드 & 백엔드 미니프로젝트 협업으로 만들어진 서비스입니다. <br/>
+> **개 요** : 대학병원 의사들을 위한 쉽고 빠른 당직/연차 관리 서비스입니다. <br/> **개발 기간** : 2023. 07. 24 ~ 2023. 08. 11 (약 3주) <br/> **참고 사항** : 패스트캠퍼스 부트캠프의 프론트엔드 & 백엔드 미니프로젝트 협업으로 만들어진 서비스입니다. <br/>
 
-<p align=left>
-<img src="https://img.shields.io/github/issues/MINI-TEAM3/client?style=flat"/>
-<img src="https://img.shields.io/github/issues-closed/MINI-TEAM3/client?style=flat"/>
-<img src="https://img.shields.io/github/last-commit/MINI-TEAM3/client?style=flat"/>
-</p>
 <br><br>
 
 ## 👤 프로젝트 팀원
