@@ -14,17 +14,14 @@
 
 ### [🔐 Dr.Cal (관리자용)](https://drcal-admin.netlify.app)
 
-| 테스트 계정 (일반) |
-| :----------------: |
-|   user@test.com    |
-|      test1234      |
+<br />
 
-| 서울대학교 병원 (관리자) | 연세 세브란스 병원 (관리자) | 고려대학교 안암병원 (관리자) |
-| :----------------------: | :-------------------------: | :--------------------------: |
-|   admin@doctorcal.com    |    admin2@doctorcal.com     |     admin3@doctorcal.com     |
-|         12345678         |          12345678           |           12345678           |
+| 테스트 계정 (일반) | 서울대학교 병원 (관리자) | 연세 세브란스 병원 (관리자) | 고려대학교 안암병원 (관리자) |
+| :----------------: | :----------------------: | :-------------------------: | :--------------------------: |
+|   user@test.com    |   admin@doctorcal.com    |    admin2@doctorcal.com     |     admin3@doctorcal.com     |
+|      test1234      |         12345678         |          12345678           |           12345678           |
 
-**`관리자 계정은 회원가입 요청 승인 외에는 사용을 자제해 주세요`**
+**`일반 사용자 계정은 직접 회원가입 가능합니다.`**<br /> **`관리자 계정은 회원가입 요청 승인 외에는 사용을 자제해 주세요`**
 
 <br><br>
 
@@ -68,7 +65,7 @@
 <img src="https://img.shields.io/badge/Recoil-3578E5?style=flat&logo=recoil&logoColor=white" />
 <img src="https://img.shields.io/badge/Vite-646CFF?style=flat&logo=Vite&logoColor=white"/>
 <img src="https://img.shields.io/badge/npm-CB3837?style=flat&logo=npm&logoColor=white"/>
-<img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat&logo=Visual Studio Code&logoColor=white"/
+<img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat&logo=Visual Studio Code&logoColor=white"/>
 </p>
 
 **Back-End**
@@ -82,7 +79,7 @@
 **Deployment**
 
 <p>
-<img src=https://img.shields.io/badge/Netlify-00C7B7?style=flat&logo=netlify&logoColor=white"/>
+<img src="https://img.shields.io/badge/Netlify-00C7B7?style=flat&logo=netlify&logoColor=white" />
 <img src="https://img.shields.io/badge/AWS-232F3E?style=flat&logo=amazonaws&logoColor=white" />
 <img src="https://img.shields.io/badge/AWS_EC2-FF9900?style=flat&logo=amazonec2&logoColor=white" />
 </p>
@@ -90,10 +87,10 @@
 **Cowork Tools**
 
 <p>
-
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat&logo=Slack&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000?style=flat&logo=Notion&logoColor=white) ![Zoom](https://img.shields.io/badge/Zoom-2D8CFF?style=flat&logo=Zoom&logoColor=white) ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=figma&logoColor=white) ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white)
+</p>
 
-</p> <br></br>
+<br></br>
 
 ## 🖥️ 기능 소개
 
