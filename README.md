@@ -10,23 +10,21 @@
 
 ## 🎮 프로젝트 DEMO
 
-### [🥼 Dr.Cal - Client (일반용)](https://drcal.netlify.app)
+### [🥼 Dr.Cal (일반용)](https://drcal.netlify.app)
 
-**`직접 회원가입을 해보시면 더욱 좋습니다`**
+### [🔐 Dr.Cal (관리자용)](https://drcal-admin.netlify.app)
 
-|  테스트 계정  |
-| :-----------: |
-| user@test.com |
-|   test1234    |
+| 테스트 계정 (일반) |
+| :----------------: |
+|   user@test.com    |
+|      test1234      |
 
-### [🔐 Dr.Cal - admin (관리자용)](https://drcal-admin.netlify.app)
+| 서울대학교 병원 (관리자) | 연세 세브란스 병원 (관리자) | 고려대학교 안암병원 (관리자) |
+| :----------------------: | :-------------------------: | :--------------------------: |
+|   admin@doctorcal.com    |    admin2@doctorcal.com     |     admin3@doctorcal.com     |
+|         12345678         |          12345678           |           12345678           |
 
-**`회원가입 요청 승인 외에는 사용을 자제해 주세요`**
-
-|   서울대학교 병원   |  연세 세브란스 병원  | 고려대학교 안암병원  |
-| :-----------------: | :------------------: | :------------------: |
-| admin@doctorcal.com | admin2@doctorcal.com | admin3@doctorcal.com |
-|      12345678       |       12345678       |       12345678       |
+**`관리자 계정은 회원가입 요청 승인 외에는 사용을 자제해 주세요`**
 
 <br><br>
 
@@ -34,10 +32,10 @@
 
 > **개 요** : 대학병원 의사들을 위한 쉽고 빠른 당직, 연차 관리 서비스입니다. <br/> > **개발 기간** : 2023. 07. 24. ~ 2023. 08. 11. <br/> > **참고 사항** : 패스트캠퍼스 부트캠프의 프론트엔드 & 백엔드 미니프로젝트 협업으로 만들어진 서비스입니다. <br/>
 
-<p align=center>
-<img src="https://img.shields.io/github/issues/MINI-TEAM3/mini3-server?style=flat"/>
-<img src="https://img.shields.io/github/issues-closed/MINI-TEAM3/mini3-server?style=flat"/>
-<img src="https://img.shields.io/github/last-commit/MINI-TEAM3/mini3-server?style=flat"/>
+<p align=left>
+<img src="https://img.shields.io/github/issues/MINI-TEAM3/client?style=flat"/>
+<img src="https://img.shields.io/github/issues-closed/MINI-TEAM3/client?style=flat"/>
+<img src="https://img.shields.io/github/last-commit/MINI-TEAM3/client?style=flat"/>
 </p>
 <br><br>
 
