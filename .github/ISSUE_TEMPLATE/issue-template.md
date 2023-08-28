@@ -1,6 +1,6 @@
 ---
 name: issue template
-about: 미니 프로젝트 이슈 템플릿
+about: 이슈 템플릿
 title: "[ 페이지명 ] 이슈 내용"
 labels: ''
 assignees: ''
